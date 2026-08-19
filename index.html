@@ -1,0 +1,3214 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Logo hiển thị trên Tab trình duyệt máy tính -->
+    <link rel="icon" href="img/W_bg.png">
+    
+    <!-- Logo hiển thị khi lưu trang ra màn hình điện thoại -->
+    <link href="XTrading32.png">
+    
+    <title>XTrading | Hệ thống truy vết dòng tiền </title>
+    
+    <meta name="description" content="Hệ thống chỉ báo kỹ thuật hỗ trợ nhà đầu tư theo dấu dòng tiền thông minh và tối ưu hóa chiến lược giao dịch.">
+    <meta name="theme-color" content="#030611">
+    <meta name="robots" content="index, follow">
+
+    <!-- TODO SEO: Khi lên domain thật, đổi canonical và og:image thành URL chính thức của anh. -->
+    <link rel="canonical" href="https://XTrading.vn/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="XTrading - Theo Dấu Dòng Tiền Thông Minh">
+    <meta property="og:description" content="Hệ thống chỉ báo kỹ thuật hỗ trợ nhà đầu tư theo dấu dòng tiền thông minh và tối ưu hóa chiến lược giao dịch.">
+    <meta property="og:image" content="XTrading32.png">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Tailwind config phải đặt trước CDN để custom màu và font được nhận ngay khi tải trang. -->
+    <script>
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#06b6d4', /* Cyan */
+                            600: '#0891b2',
+                            900: '#164e63',
+                        },
+                        wynDark: '#020920', 
+                        wynCard: '#090d1a'   
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font thống nhất toàn trang -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* =========================================================================
+           🎨 BIẾN ĐỔI MÀU NỀN TRANG DỄ DÀNG TẠI ĐÂY
+           ========================================================================= */
+        :root {
+            --bg-page-color: #020920; /* ĐỔI MÀU NỀN CHÍNH Ở ĐÂY (Ví dụ: #020920, #030611, v.v.) */
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Anchor offset: header đang fixed nên cần khoảng trống phía trên khi cuộn tới */
+        section[id] {
+            scroll-margin-top: 112px;
+        }
+
+        @media (max-width: 1023px) {
+            section[id] {
+                scroll-margin-top: 100px;
+            }
+        }
+
+        *, *::before, *::after {
+            letter-spacing: 0;
+        }
+
+        body {
+            background-color: var(--bg-page-color);
+            color: #f0fdff;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6, p, a, button, span, li, td, th {
+            font-family: 'Plus Jakarta Sans', Inter, sans-serif;
+        }
+
+        canvas { display: block; width: 100%; height: 100%; }
+
+        .font-sans,
+        .font-display,
+        .font-mono {
+            font-family: 'Plus Jakarta Sans', Inter, sans-serif !important;
+        }
+
+        .hero-title {
+            font-size: clamp(1.8rem, 5.8vw + 0.5rem, 4.5rem);
+            line-height: 1.35 !important;
+        }
+
+        @media (min-width: 640px) {
+            .hero-title {
+                line-height: 1.12;
+            }
+        }
+
+        .hero-copy {
+            line-height: 1.75;
+        }
+
+        /* =========================================================================
+           🌌 CONTAINER CHỨA HIỆU ỨNG NỀN VŨ TRỤ - CHỈ DÀNH CHO PHẦN HERO TRÁNH NẶNG TRANG
+           ========================================================================= */
+        .cosmic-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 700px; 
+            pointer-events: none;
+            z-index: 0; 
+            overflow: hidden;
+        }
+
+        
+
+
+
+/* =========================================================================
+   ✨ LỚP NỀN SAO TĨNH ĐƯỢC TỐI ƯU HÓA PHẦN CỨNG GPU BẰNG BOX-SHADOW (CÁCH 1)
+   Tăng mật độ gấp 5 lần (X5 Density) bằng phương pháp liệt kê tọa độ lẻ ngẫu nhiên.
+   ========================================================================= */
+        .stars-background {
+            position: fix;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 980px; 
+            z-index: 2; 
+            pointer-events: none;
+            /* Tăng tốc đồ họa phần cứng bằng GPU */
+            transform: translate3d(0, 0, 0);
+            -webkit-transform: translate3d(0, 0, 0);
+            will-change: transform;
+            opacity: 0.95;
+            overflow: hidden;
+            mask-image: linear-gradient(to bottom, black 30%, rgba(0,0,0,0.5) 65%, transparent 90%);
+            -webkit-mask-image: linear-gradient(to bottom, black 30%, rgba(0,0,0,0.5) 65%, transparent 90%);
+        }
+
+        /* Lớp sao mịn nhỏ (1px) - Mật độ cực cao, ngẫu nhiên hoàn toàn */
+        .stars-glow-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            box-shadow: 
+                /* --- DANH SÁCH SAO GỐC --- */
+                43px 83px rgba(255,255,255,0.95), 183px 212px rgba(255,255,255,0.85), 297px 115px #fff,
+                341px 290px rgba(255,255,255,0.95), 580px 175px #fff, 715px 95px rgba(255,255,255,0.9),
+                845px 320px #fff, 912px 145px rgba(255,255,255,0.85), 1120px 240px #fff,
+                135px 480px rgba(255,255,255,0.9), 450px 390px #fff, 620px 520px rgba(255,255,255,0.9),
+                890px 380px #fff, 1040px 600px rgba(255,255,255,0.7), 1280px 510px #fff,
+                210px 730px rgba(255,255,255,0.6), 650px 780px #fff, 1150px 690px rgba(255,255,255,0.7),
+                380px 890px rgba(255,255,255,0.5), 940px 920px rgba(255,255,255,0.45),
+              
+                /* --- [GHI CHÚ]: SAO NHỎ BỔ SUNG GẤP 5 LẦN (Y < 350) --- */
+                12px 141px rgba(255,255,255,0.8), 34px 82px rgba(255,255,255,0.9), 51px 123px rgba(255,255,255,0.65),
+                79px 252px rgba(255,255,255,0.7), 123px 94px #fff, 153px 321px rgba(255,255,255,0.85),
+                174px 192px rgba(255,255,255,0.5), 181px 112px rgba(255,255,255,0.9), 213px 267px rgba(255,255,255,0.7),
+                289px 43px rgba(255,255,255,0.85), 312px 165px #fff, 356px 234px rgba(255,255,255,0.9),
+                389px 98px rgba(255,255,255,0.6), 414px 321px rgba(255,255,255,0.8), 436px 143px #fff,
+                456px 111px rgba(255,255,255,0.7), 467px 290px rgba(255,255,255,0.95), 490px 234px rgba(255,255,255,0.8),
+                512px 56px rgba(255,255,255,0.6), 532px 189px rgba(255,255,255,0.95), 558px 123px #fff,
+                578px 256px rgba(255,255,255,0.75), 590px 56px rgba(255,255,255,0.85), 617px 345px rgba(255,255,255,0.6),
+                637px 278px rgba(255,255,255,0.9), 656px 123px #fff, 689px 190px rgba(255,255,255,0.75),
+                711px 256px rgba(255,255,255,0.95), 735px 289px rgba(255,255,255,0.6), 758px 167px rgba(255,255,255,0.85),
+                781px 91px #fff, 804px 234px rgba(255,255,255,0.95), 834px 111px rgba(255,255,255,0.65),
+                856px 156px rgba(255,255,255,0.8), 890px 234px rgba(255,255,255,0.9), 923px 123px #fff,
+                945px 321px rgba(255,255,255,0.75), 968px 289px rgba(255,255,255,0.85), 1012px 145px rgba(255,255,255,0.9),
+                1034px 234px rgba(255,255,255,0.6), 1056px 123px #fff, 1078px 189px rgba(255,255,255,0.85),
+                1095px 321px rgba(255,255,255,0.7), 1135px 123px rgba(255,255,255,0.95), 1156px 280px #fff,
+                1180px 190px rgba(255,255,255,0.8), 1210px 145px rgba(255,255,255,0.9), 1245px 230px #fff,
+                1278px 90px rgba(255,255,255,0.75), 1312px 185px rgba(255,255,255,0.9), 1350px 312px rgba(255,255,255,0.8),
+                1385px 240px #fff, 1420px 150px rgba(255,255,255,0.7),
+                
+                /* --- [GHI CHÚ]: SAO NHỎ BỔ SUNG GIỮA TRANG (Y: 350 - 650) - THƯA HƠN --- */
+                56px 456px rgba(255,255,255,0.6), 142px 567px rgba(255,255,255,0.5), 234px 434px rgba(255,255,255,0.55),
+                356px 610px rgba(255,255,255,0.45), 450px 480px rgba(255,255,255,0.6), 512px 623px rgba(255,255,255,0.5),
+                618px 432px rgba(255,255,255,0.6), 724px 580px rgba(255,255,255,0.4), 834px 412px rgba(255,255,255,0.55),
+                942px 615px rgba(255,255,255,0.45), 1056px 450px rgba(255,255,255,0.6), 1150px 590px rgba(255,255,255,0.35),
+                1256px 410px rgba(255,255,255,0.5), 1342px 620px rgba(255,255,255,0.4),
+                
+                /* --- [GHI CHÚ]: SAO NHỎ BỔ SUNG ĐÁY TRANG (Y > 650) - RẤT THƯA THỚT --- */
+                120px 810px rgba(255,255,255,0.3), 340px 790px rgba(255,255,255,0.25), 580px 880px rgba(255,255,255,0.35),
+                820px 760px rgba(255,255,255,0.25), 1050px 890px rgba(255,255,255,0.2), 1290px 790px rgba(255,255,255,0.3);
+        }
+
+        /* Lớp sao vừa (2px) - Ánh sáng cao rõ rệt tạo chiều sâu */
+        .stars-glow-layer-medium {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            box-shadow: 
+                /* --- DANH SÁCH SAO GỐC --- */
+                95px 120px rgba(255,255,255,0.95), 250px 75px #fff, 530px 210px rgba(255,255,255,0.95),
+                780px 310px #fff, 1150px 150px rgba(255,255,255,0.95), 1380px 280px #fff,
+                310px 490px rgba(255,255,255,0.85), 810px 540px rgba(255,255,255,0.8), 1210px 440px #fff,
+                140px 650px rgba(255,255,255,0.7), 620px 690px #fff, 1050px 610px rgba(255,255,255,0.6),
+                
+                /* --- [GHI CHÚ]: SAO TRUNG BỔ SUNG GẤP 5 LẦN (Y < 350) --- */
+                45px 112px #fff, 112px 189px rgba(255,255,255,0.9), 180px 56px #fff,
+                212px 290px rgba(255,255,255,0.85), 290px 145px #fff, 389px 212px rgba(255,255,255,0.9),
+                423px 78px rgba(255,255,255,0.95), 498px 167px #fff, 567px 90px rgba(255,255,255,0.85),
+                612px 280px rgba(255,255,255,0.9), 678px 112px #fff, 745px 189px rgba(255,255,255,0.8),
+                834px 95px rgba(255,255,255,0.95), 890px 210px #fff, 956px 143px rgba(255,255,255,0.9),
+                1012px 280px rgba(255,255,255,0.85), 1089px 123px #fff, 1145px 234px rgba(255,255,255,0.9),
+                1212px 78px rgba(255,255,255,0.95), 1290px 189px #fff, 1345px 120px rgba(255,255,255,0.85),
+                1390px 290px rgba(255,255,255,0.9),
+                
+                /* --- [GHI CHÚ]: SAO TRUNG BỔ SUNG GIỮA VÀ ĐÁY TRANG (Y > 350) --- */
+                215px 420px rgba(255,255,255,0.7), 490px 512px rgba(255,255,255,0.65), 720px 380px #fff,
+                980px 530px rgba(255,255,255,0.6), 1140px 490px rgba(255,255,255,0.7), 1310px 420px #fff,
+                380px 720px rgba(255,255,255,0.4), 850px 810px rgba(255,255,255,0.35), 1220px 760px rgba(255,255,255,0.4),
+                /* ===== CỤM SAO PHẢI - THIẾT KẾ LẠI ===== */
+
+                /* Cụm 1 */
+                1478px 78px rgba(255,255,255,0.95),1486px 92px rgba(255,255,255,0.75),1498px 84px rgba(255,255,255,0.85),1510px 102px rgba(255,255,255,0.65),
+
+                /* Cụm 2 */
+                1422px 386px rgba(255,255,255,0.95),1434px 472px rgba(255,255,255,0.8),1448px 495px rgba(255,255,255,0.7),1460px 378px rgba(255,255,255,0.9),
+
+                /* Sao sáng nổi bật */
+                1628px 58px #fff,1605px 148px #fff,1632px 245px rgba(255,255,255,0.95),1688px 308px #fff,1615px 392px rgba(255,255,255,0.9),1668px 468px rgba(255,255,255,0.85),1622px 575px rgba(255,255,255,0.8),1695px 738px rgba(255,255,255,0.75),
+
+                /* Sao ngẫu nhiên */
+                1688px 46px rgba(255,255,255,0.55),1715px 112px rgba(255,255,255,0.7),1742px 63px rgba(255,255,255,0.45),1664px 142px rgba(255,255,255,0.8),1586px 92px rgba(255,255,255,0.6),
+
+                1508px 282px rgba(255,255,255,0.55),1648px 338px rgba(255,255,255,0.7),1696px 412px rgba(255,255,255,0.45),1675px 448px rgba(255,255,255,0.65),1638px 528px rgba(255,255,255,0.55),
+
+                1725px 618px rgba(255,255,255,0.4),1588px 572px rgba(255,255,255,0.5),1558px 652px rgba(255,255,255,0.45),1535px 690px rgba(255,255,255,0.35),
+
+                1602px 805px rgba(255,255,255,0.3),1665px 842px rgba(255,255,255,0.25),1642px 878px rgba(255,255,255,0.3),1618px 826px rgba(255,255,255,0.28);
+        }
+
+/* Sao động */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(2.5); }
+            50% { opacity: var(--max-opacity); transform: scale(1); }
+        }
+
+/*Sao băng*/
+
+        .shooting-star {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: linear-gradient(-45deg, #fff, rgba(0, 0, 255, 0));
+            filter: drop-shadow(0 0 6px #fff);
+            z-index: 5;
+            opacity: 0;
+        }
+
+        .shooting-star::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, #67e8f9 , transparent);
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: rotate(var(--angle)) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(var(--angle)) translateX(-1200px);
+                opacity: 0;
+            }
+        }
+
+      
+/* Tùy chỉnh kính mờ Menu header */
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .gpu-layer {
+            transform: translateZ(0);
+        }
+
+/* =========================================================================
+    🎨 QUẦNG SÁNG CỰC QUANG TĨNH NGHỆ THUẬT SIÊU NỔI BẬT DƯỚI NỀN (HIỂN THỊ RÕ RỆT)
+========================================================================= */
+        .ambient-glow-orb {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 9999px;
+            mix-blend-mode: screen;
+            will-change: filter;
+        }
+
+        /* Quầng sáng xanh Cyan thương hiệu rộng */
+        .glow-cyan {
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.28) 0%, rgba(6, 182, 212, 0.08) 50%, transparent 75%);
+            filter: blur(100px);
+            -webkit-filter: blur(100px);
+        }
+
+        /* Quầng sáng tím Indigo huyền ảo sâu */
+        .glow-purple {
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.24) 0%, rgba(99, 102, 241, 0.06) 55%, transparent 75%);
+            filter: blur(110px);
+            -webkit-filter: blur(110px);
+        }
+
+        /* Quầng sáng xanh ngọc lục bảo rực rỡ (Đặt biệt tôn dáng cho Bảng Giá) */
+        .glow-emerald {
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.26) 0%, rgba(20, 184, 166, 0.08) 50%, transparent 75%);
+            filter: blur(95px);
+            -webkit-filter: blur(95px);
+        }
+
+        
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-page-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+            border: 2px solid var(--bg-page-color);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.001ms !important;
+            }
+        }
+        
+/*Nút GETACCESS */
+        .btn-getaccess {
+            background: linear-gradient(135deg, #10b981, #8a2be2);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .btn-getaccess::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+
+        .btn-getaccess:hover::before {
+            left: 100%;
+        }
+
+        
+/* =========================================================================
+   ⚡ NÚT NHẬN 30 NGÀY MIỄN PHÍ - HIỆU ỨNG VIỀN XOAY CONIC GRADIENT
+ ========================================================================= */
+
+        /* 1. Khung bọc ngoài (Wrapper): Xử lý xoay màu và tạo viền */
+        .rotating-border-wrapper {
+            position: relative;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 9999px; 
+            background: transparent;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            text-decoration: none; /* Đảm bảo không bị gạch chân khi dùng thẻ <a> */
+            box-shadow: 0 0 5px -5px rgba(6, 182, 212, 1); /* viền sáng xung quanh */ 
+            user-select: none;
+        }
+
+        /* Hiệu ứng phóng to nhẹ & tăng độ sáng bóng khi hover/touch */
+        .rotating-border-wrapper:hover {
+            transform: translateY(-2px) scale(1.02); /* Phóng to nhẹ khi tương tác */
+            box-shadow: 
+                0 0 15px rgba(6, 182, 212, 0.6); /* Vầng sáng phát quang tỏa đều 360 độ */
+        }
+
+        /* Lớp mặt nạ đục rỗng ruột viền cực kỳ thanh lịch để lộ nền thật ở phía sau */
+        .rotating-border-glow-layer {
+            position: absolute;
+            inset: -1.5px; /* Đẩy nhẹ ra ngoài mép nút chỉ 1.2px cực kỳ thanh lịch */
+            padding: 2px; /* Viền siêu mảnh mang tính thẩm mỹ cao */
+            border-radius: 9999px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+
+            /* Đục rỗng phần ruột bằng công nghệ mặt nạ loại trừ */
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        /* Tạo dải màu chuyển động chạy tròn phía sau lớp mặt nạ #34d399, #2962ff, #d600f8)*/
+        .rotating-border-gradient {
+            position: absolute;
+            width: 135%;
+            height: 135%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: conic-gradient(
+                from 0deg, 
+                #34d399, /* Xanh Cyan 06b6d4*/
+                #d600f8, /* Tím huyền ảo a855f7*/
+                #06b6d4, /* Xanh Emerald 10b981*/
+                #34d399  
+            );
+            /* 👇 TỐC ĐỘ XOAY VIỀN: 4.5s xoay mượt mà, càng nhỏ xoay càng nhanh */
+            animation: rotate-border-gradient 4.5s linear infinite;
+        }
+
+        @keyframes rotate-border-gradient {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* 2. Phần nút nội dung phía bên trong che khuất lõi gradient tạo hiệu ứng viền phát sáng */
+        .rotating-border-btn {
+            position: relative;
+            z-index: 2;
+            /* 👇 Nền tối mờ trong suốt (Glassmorphism) hòa quyện mây tinh vân phía sau */
+            background: rgba(255, 255, 255, 0.05) ; /* rgba(7, 15, 43, 0.3) đến rgba(28, 28, 30, 0.50) */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Sợi chỉ trắng siêu mỏng định hình khung */
+            color: #e5e7eb;
+            padding: 8px 22px; /* ĐỔI KHOẢNG CÁCH ĐỆM (Size nút): py-4 (trên dưới) và px-8 (trái phải) */
+            border-radius: 9999px; /* Đồng bộ độ bo tròn với wrapper */
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            box-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.1),
+                inset 0 1px 1px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Đổi màu nền nút tối sẫm hơn một chút khi hover */
+        .rotating-border-btn:hover {
+            background-color: rgba(179, 170, 229, 0.2); /* Làm nền sáng hơn */
+            border-color: rgba(255, 255, 255, 0.7); /* Làm viền sắc nét hơn */
+            box-shadow: 
+                        0 0 15px rgba(255, 255, 255, 0.4), /* Phát quang lan tỏa mạnh hơn */
+                        0 0 35px rgba(79, 70, 229, 0.4), /* Thêm hiệu ứng màu xanh tím rực rỡ */
+                        inset 0 1px 1px rgba(255, 255, 255, 0.6); /* Tăng độ sáng lõm */
+            
+        }
+        /* Ẩn dải màu */
+        .rotating-border-wrapper:hover .rotating-border-gradient {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Gạch chân MENU */
+        .underline-from-center {
+            position: relative;
+            text-decoration: none;
+        }
+
+        .underline-from-center::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -4px;
+            left: 50%; /* Bắt đầu từ giữa */
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        .underline-from-center:hover::after {
+            width: 100%;
+            left: 0; /* Mở rộng sang hai bên */
+        }
+        .responsive-text {
+            /* Chữ sẽ tự co giãn từ 10px đến 14px tùy theo độ rộng màn hình */
+            font-size: clamp(12px, 3vw, 16px);
+        }
+        /* hiệu ứng chữ #00bce6, #2962ff 50.31%, #d500f9 d600f8*/
+        .textGradient-ttl {
+            animation: text-animation-title-ttl 6s ease-in-out infinite;
+            background: linear-gradient(90deg, #34d399, #2962ff 50.29%, #d600f8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            background-repeat: no-repeat;
+            background-size: 200%;
+        }
+
+        @keyframes text-animation-title-ttl {
+            0% {
+                background-position:0
+            }
+
+            50% {
+                background-position:80%
+            }
+
+            to {
+                background-position:0
+            }
+        }
+
+
+        /* Hover nút dùng thủ 30days 
+           -> Hãy kích hoạt Animation lên thẻ Con có class (.hover-blink-svg) paper-plane  */
+        .rotating-border-wrapper:hover .hover-blink-svg,
+        .rotating-border-wrapper.is-touched .hover-blink-svg {
+            animation: svg-blink 1s infinite ease-in-out;
+        }
+        @keyframes svg-blink {
+            0%, 100% { 
+                opacity: 1; 
+                filter: drop-shadow(0 0 2px rgba(176,225,245,0.4)); 
+            }
+            50% { 
+                opacity: 0.5; /* Giảm nhẹ độ mờ của nét vẽ */
+                filter: drop-shadow(0 0 10px rgba(34,211,238,0.9)); /* Tạo quầng phát sáng neon tỏa rộng cực đẹp */
+            }
+        }
+
+
+/* =========================================================================
+   📺 HỆ THỐNG MARQUEE CẢI TIẾN: HỖ TRỢ VUỐT KÉO TRÊN DI ĐỘNG
+========================================================================= */
+
+.section-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title {
+    color: #ffffff;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    font-weight: 300;
+    text-align: center;
+}
+
+/* 🌟 DÒNG THAY ĐỔI: Thêm `overflow-x: auto` trên di động để cho phép vuốt kéo tự do, ẩn thanh cuộn xấu xí đi */
+.marquee-container {
+    width: 85%;
+    overflow-x: auto; /* Cho phép cuộn ngang tự nhiên khi vuốt tay */
+    overflow-y: hidden;
+    /*background-color: #0209204d;
+    border-top: 1px solid #334a66;
+    border-bottom: 1px solid #334a66;*/
+    padding: 10px 0;
+    cursor: default;
+    -webkit-user-select: none;
+    mask-image: linear-gradient(to right, transparent, black 25%, black 75%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 25%, black 75%, transparent);
+    
+    /* Ẩn thanh cuộn (scrollbar) trên các trình duyệt để giữ giao diện sạch đẹp */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+.marquee-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* 🌟 DÒNG THAY ĐỔI: Loại bỏ thuộc tính animation CSS cũ, chúng ta sẽ chuyển sang điều khiển bằng JS để hỗ trợ cả vuốt kéo */
+.marquee-track {
+    display: flex;
+    white-space: nowrap;
+    width: max-content;
+    will-change: transform; /* Tối ưu hóa card đồ họa phần cứng */
+    align-items: center;
+
+}
+
+/* 🎯 LỚP ÉP SÁT HÌNH VÀO CHỮ */
+.ads-supported-markets__slide {
+    display: flex;
+    align-items: center;    /* Canh giữa hoàn hảo theo chiều dọc */
+    gap: 8px;               /* 💡 Khoảng cách thực tế giữa icon và chữ. Bạn có thể tăng/giảm số này theo ý muốn */
+    flex-shrink: 0;
+    justify-content: flex-start;
+    
+}
+
+/* 🎯 ĐIỀU CHỈNH ICON KHÍT VÀO KHUNG */
+.ads-supported-markets__image {
+    display: block;
+    width: 50px;            /* Chỉnh size icon tại đây (Ví dụ: 40px) */
+    height: 50px;
+    
+    /* Đổi từ 'contain' sang 'cover' để loại bỏ 2 phần rìa trong suốt của file ảnh WebP gốc */
+    object-fit: cover; 
+    
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    margin-right: -15px;
+    filter: brightness(0) invert(1) opacity(0.6);
+}
+
+/* 📱 Responsive tối ưu cho Di động */
+@media (max-width: 768px) {
+    .ads-supported-markets__image {
+        width: 40px; 
+        height: 40px;
+    }
+    .keyword {
+        font-size: 15px;
+    }
+}
+
+.keywords {
+    /* Ép cả hình lẫn chữ bên trong thẻ span này phải nằm trên 1 hàng ngang */
+    display: inline-flex; 
+    align-items: center;     /* Căn giữa hình và chữ theo chiều dọc */
+    
+    /* 🎯 KHOẢNG CÁCH: Ép hít sát sàn sạt, bạn có thể chỉnh 2px hoặc 4px */
+    gap: 20px;
+    color: #A5B4BB ;
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 0 60px;
+    text-transform: uppercase;
+}
+
+
+
+        /* =========================================================================
+           🎨 TOÀN BỘ CSS chỉ báo khung intro- ĐÃ ĐƯỢC KHÔI PHỤC VÀ ĐỒNG BỘ HOÀN TOÀN
+           ========================================================================= */
+
+        /* Container cho toàn bộ trang */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 0px;
+        }
+
+        /* --- CẤU TRÚC SECTION --- */
+        .content-section {
+            display: flex;
+            flex-direction: row; /* Desktop: Trái ảnh (60%), Phải chữ (40%) */
+            height: auto;
+            min-height: 75vh;
+            margin-bottom: 50px;
+            background-color: rgba(2, 9, 32, 0.25);
+            overflow: hidden;
+            
+            /* --- PHẦN CẤU HÌNH VIỀN GRADIENT GỐC --- */
+            border: 2px solid transparent;
+            border-radius: 16px;
+    
+            background-image: 
+                linear-gradient(rgba(2, 9, 32, 0.85), rgba(2, 9, 32, 0.85)), 
+                linear-gradient(135deg, #34d399, #2962ff, #d600f8); 
+    
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            
+            /* --- THU HẸP KHUNG SECTION --- */
+            width: 100%;
+            max-width: 1300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Khu vực hình ảnh chiếm diện tích lớn hơn (60%) */
+        .image-zone {
+            flex: 1 1 60%;
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(2, 9, 32, 0.1);
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            
+            /* Mask che biên mờ dọc trên Desktop */
+            -webkit-mask-image: linear-gradient(to bottom, 
+                transparent 0px, 
+                transparent 10px,
+                rgba(0,0,0,1) 10px,
+                rgba(0,0,0,1) calc(100% - 10px),
+                transparent calc(100% - 10px),
+                transparent 100%);
+        
+            mask-image: linear-gradient(to bottom, 
+                transparent 0px, 
+                transparent 10px, 
+                rgba(0,0,0,1) 10px, 
+                rgba(0,0,0,1) calc(100% - 10px), 
+                transparent calc(100% - 10px), 
+                transparent 100%);
+        }
+        
+        .image-zone:active {
+            cursor: grabbing;
+        }
+
+        /* Track chứa các hình ảnh */
+        .image-track {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column; /* Chạy dọc */
+            gap: 25px;
+            padding: 20px 0;
+            will-change: transform;
+        }
+
+        /* Định dạng từng item ảnh tỷ lệ 3:2 */
+        .image-item {
+            width: 90%;
+            margin: 0 auto;
+            aspect-ratio: 3 / 2;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s;
+            transform-origin: center center;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        /* Hiệu ứng Hover phóng to trên Desktop (khi không kéo) */
+        .image-zone:not(.dragging) .image-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        /* Khu vực chữ (40%) */
+        .text-zone {
+            flex: 1 1 40%;
+            padding: 130px 30px 80px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            background-color: #02092080;
+            border-left: 1px solid #02092080;
+        }
+
+        .text-zone h2 {
+            font-size: clamp(1.8rem, 4vw + 0.5rem, 3rem); 
+            margin-bottom: 20px;
+            color: #f0fdff;
+            font-weight: 700;
+        }
+
+        .text-zone p { 
+            font-size: clamp(1.05rem, 1vw + 0.5rem, 1.5rem);
+            margin-bottom: 30px;
+            color: #f0fdff;
+        }
+
+        /* Đảo chiều bố cục */
+        .content-section.reverse-layout {
+            flex-direction: row-reverse;
+        }
+
+        .content-section.reverse-layout .text-zone {
+            border-left: none;
+            border-right: 1px solid #02092080;
+        }
+
+/* =========================================================================
+   📱 ĐÁP ỨNG DI ĐỘNG CHUẨN (DƯỚI HOẶC BẰNG 768PX HOẶC KHI BẬT GIẢ LẬP)   ========================================================================= */
+        @media (max-width: 768px), .sim-mode-mobile {
+            .container {
+                padding: 20px 16px ;
+            }
+
+            .content-section,
+            .content-section.reverse-layout {
+                flex-direction: column ; /* Xếp dọc: Trên chữ, Dưới ảnh */
+                height: auto ;
+                margin-bottom: 30px ;
+            }
+
+            .text-zone {
+                order: 1 ; /* LẬT CHỮ LÊN TRÊN */
+                flex: none ;
+                width: 100% ;
+                padding: 30px 30px 70px 30px ;
+                border-left: none ;
+                border-right: none ;
+                border-bottom: 1px solid #020920 ;
+                align-items: flex-start ;
+                text-align: left ;
+            }
+
+            .text-zone h2 {
+                font-size: 1.8rem ;
+            }
+
+            .text-zone p {
+                font-size: 1.05rem ;
+                margin-bottom: 24px ;
+                text-wrap: pretty ;
+            }
+
+            .image-zone {
+                order: 2 ; /* LẬT ẢNH XUỐNG DƯỚI */
+                flex: none ;
+                width: 100% ;
+                height: 410px ; /* Chiều cao dải ảnh trên điện thoại */
+                
+                /* Đổi mask biên mờ sang Trái và Phải cho Mobile */
+                -webkit-mask-image: linear-gradient(to right, 
+                    transparent 0px, 
+                    transparent 10px, 
+                    rgba(0,0,0,1) 10px, 
+                    rgba(0,0,0,1) calc(100% - 10px), 
+                    transparent calc(100% - 10px), 
+                    transparent 100%) !important;
+                mask-image: linear-gradient(to right, 
+                    transparent 0px, 
+                    transparent 10px, 
+                    rgba(0,0,0,1) 10px, 
+                    rgba(0,0,0,1) calc(100% - 10px), 
+                    transparent calc(100% - 10px),
+                    transparent 100%) !important;
+            }
+
+            .image-zone--bt {
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+                -webkit-mask-image: none !important;
+                mask-image: none !important;
+            }
+
+            /* Đổi track thành hàng ngang chạy từ phải qua trái */
+            .image-track {
+                flex-direction: row ;
+                height: 100% ;
+                width: max-content !;
+                top: 0 ;
+                left: 0 ;
+                padding: 0 20px ;
+                align-items: center ;
+            }
+
+            .image-item {
+                height: 85% ;
+                width: auto ;
+                aspect-ratio: 3 / 2 ;
+                flex-shrink: 0 ;
+                margin: 0 ;
+            }
+
+            /* Hiệu ứng khi chạm ngón tay giữ ảnh trên điện thoại */
+            .image-item.touch-active {
+                transform: scale(1.1) ;
+                z-index: 10 !important;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            }
+        }
+
+
+/* NÚT BẤM KHUNG INTRO */
+/* Khung bọc ngoài cùng - Định vị absolute không bị lỗi click */
+        .w-button-wrapper {
+            position: absolute;
+            left: 0px; /* tương đương left-4 */
+            margin-top: 0px; /* tương đương mt-4 */
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none; /* Chuột xuyên qua lớp bọc */
+
+        }
+
+        /* 1. NÚT BẤM CHÍNH: Ép trình duyệt đưa lên tầng cao nhất */
+        .w-button-main {
+            pointer-events: auto !important;
+            position: relative;
+            width: max-content;
+            z-index: 2; /* Số lớn hơn để nằm trên bóng */
+            transform: translate3d(0, 0, 0); /* Kích hoạt GPU layer cho nút để không bị bóng đè */
+        }
+
+        /* 2. KHỐI CHỨA BÓNG ĐỔ: Hạ xuống tầng dưới nút */
+        .w-button-glow-container {
+            position: absolute;
+            inset: 0;
+            overflow: visible;
+            pointer-events: none;
+            z-index: 1; /* Số nhỏ hơn nút */
+            transform: translate3d(0, 0, 0); /* Giữ nguyên để kích hoạt GPU layer cho bóng */
+            will-change: transform, opacity;
+        }
+
+        /* Bóng 1: Khít viền, sáng rực khi hover */
+        .w-glow-active {
+            position: absolute;
+            inset: -2px; /* Đẩy nhẹ ra ngoài viền 2px để không bị ruột nút đè */
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #34d399, #2962ff, #d600f8);
+            filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        /* Bóng 2: Hào quang mịn tỏa rộng cố định */
+        .w-glow-dim {
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #34d399, #2962ff, #d600f8);
+            filter: blur(25px);
+            opacity: 0.15;
+        }
+
+        /* Hiệu ứng HOVER điều khiển từ thẻ cha */
+        .w-button-wrapper:hover .w-glow-active {
+            opacity: 1;
+            transform: scale(1.04); /* Tỏa rộng ra */
+        }
+
+/* Áp dụng khi màn hình là Desktop hoặc Điện thoại xoay ngang (chiều rộng từ 768px trở lên) */
+        @media (min-width: 768px) {
+            .w-button-wrapper {
+                /* 1. Trả về position relative để nút chiếm diện tích thực, tự động đẩy chữ và hình ra, không sợ bị cấn */
+                position: relative; 
+                left: auto;
+                margin-top: 0;
+                
+                /* 2. Tạo khoảng đệm cực kỳ an toàn xung quanh nút 
+                padding: 24px;  Tăng khoảng cách xung quanh nút lên 24px */
+                width: max-content;
+                /* 3. Căn chỉnh nút (Tùy chọn: căn trái, giữa hoặc phải tùy giao diện của bạn) */
+                justify-content: flex-start; /* Căn nút sát bên trái của cột. Nếu muốn giữa thì đổi thành center */
+                
+                /* 4. Đảm bảo không bị các thành phần tuyệt đối khác đè lên */
+                z-index: 30; 
+            }
+        }
+
+/* Fade in SECTION */
+        .fade-in-section {
+          opacity: 0;
+          transform: translateY(50px); /* Tăng độ dịch chuyển */
+          
+          /* Thời gian nhanh hơn (0.6s) và gia tốc mượt hơn */
+          transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                      transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          
+          /* Giúp trình duyệt tối ưu hóa animation */
+          will-change: opacity, transform; 
+        }
+
+        /* Trạng thái khi cuộn tới: Hiện rõ và trở về vị trí cũ */
+        .fade-in-section.is-visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+    </style>
+</head>
+<body id="top" class="antialiased">
+<section class="aurora-hero" style="position:fixed;width:100%;height:100vh;min-height:520px;overflow:hidden;isolation:isolate">
+  <!--New star sky-->
+        <canvas id="sky" style="position:fixed;inset:0;display:block;width:100vw;height:100vh;pointer-events:none"></canvas>
+        <script>
+        (function(){
+        var canvas=document.getElementById("sky");
+        var ctx=canvas.getContext("2d");
+        var W=0,H=0,stars=[],dpr=Math.min(window.devicePixelRatio||1,2);
+        var cfg={density:120,size:0.6,distribution:0.1,glowColor:"#c8d8ff"};
+        function resize(){
+          var rect=canvas.getBoundingClientRect();
+          var newW=rect.width||innerWidth;
+          var newH=rect.height||innerHeight;
+          var widthChanged = (newW !== W);
+          
+          W = newW;
+          H = newH;
+          canvas.width = Math.round(W*dpr);
+          canvas.height = Math.round(H*dpr);
+          ctx.setTransform(dpr,0,0,dpr,0,0);
+          
+          if(stars.length === 0 || widthChanged){
+            stars = makeStars();
+          }
+        }
+        window.addEventListener("resize",resize);
+        resize();
+        var PALETTE=["255,255,255","220,240,255","255,248,220","200,230,255"];
+        function hexRgb(h){var m=h.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);return m?[parseInt(m[1],16),parseInt(m[2],16),parseInt(m[3],16)]:[200,216,255];}
+        function hexA(h,a){var c=hexRgb(h);return "rgba("+c[0]+","+c[1]+","+c[2]+","+a+")";}
+        function hotspots(){var x1=W*.333,x2=W*.667,y1=H*.333,y2=H*.667;return [[x1,y1],[x2,y1],[x1,y2],[x2,y2]];}
+        function makeStars(){var arr=[],cx=W/2,cy=H/2,mr=Math.max(W,H)*0.7,b=cfg.distribution;
+          for(var i=0;i<cfg.density;i++){var x,y;
+            if(b===0){var hs=hotspots(),p=hs[Math.floor(Math.random()*4)],sp=Math.min(W,H)*.18,a=Math.random()*Math.PI*2,d=-Math.log(1-Math.random())*.55*sp;x=p[0]+Math.cos(a)*d;y=p[1]+Math.sin(a)*d;}
+            else if(b>0){if(b<.5){x=Math.random()*W;y=Math.random()*H;}else{var a2=Math.random()*Math.PI*2,r2=Math.pow(Math.random(),2.5-b*1.5)*mr*.75;x=cx+Math.cos(a2)*r2;y=cy+Math.sin(a2)*r2;}}
+            else{var a3=Math.random()*Math.PI*2,r3=(.5+(.5-b)*.5*Math.pow(Math.random(),.6))*mr;x=cx+Math.cos(a3)*r3;y=cy+Math.sin(a3)*r3;}
+            var z=Math.random(),major=Math.random()<.22,bs=major?1.6+Math.random()*1.4:.9+Math.random()*.6;
+            arr.push({x:Math.max(8,Math.min(W-8,x)),y:Math.max(8,Math.min(H-8,y)),z:z,size:bs*cfg.size,gr:bs*cfg.size*(major?8:5),alpha:.45+Math.random()*.5,spd:.7+Math.random()*0.5,ph:Math.random()*Math.PI*2,spikes:major||Math.random()<.3});
+          }return arr;}
+        function draw(s,px,py,a){var r=s.gr*(.8+a*.4),g=ctx.createRadialGradient(px,py,0,px,py,r);
+          g.addColorStop(0,hexA(cfg.glowColor,a*.95));g.addColorStop(.3,hexA(cfg.glowColor,a*.35));g.addColorStop(.75,hexA(cfg.glowColor,a*.08));g.addColorStop(1,"rgba(0,0,0,0)");
+          ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);ctx.fill();
+          if(s.spikes){var sp=r*.95;ctx.lineWidth=.95;
+            var h=ctx.createLinearGradient(px-sp,py,px+sp,py);h.addColorStop(0,"rgba(0,0,0,0)");h.addColorStop(.5,hexA(cfg.glowColor,a*.95));h.addColorStop(1,"rgba(0,0,0,0)");
+            ctx.strokeStyle=h;ctx.beginPath();ctx.moveTo(px-sp,py);ctx.lineTo(px+sp,py);ctx.stroke();
+            var v=ctx.createLinearGradient(px,py-sp,px,py+sp);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(.5,hexA(cfg.glowColor,a*.95));v.addColorStop(1,"rgba(0,0,0,0)");
+            ctx.strokeStyle=v;ctx.beginPath();ctx.moveTo(px,py-sp);ctx.lineTo(px,py+sp);ctx.stroke();}
+          ctx.fillStyle="rgba(255,255,255,"+Math.min(1,a*1.2)+")";ctx.beginPath();ctx.arc(px,py,s.size,0,Math.PI*2);ctx.fill();}
+        var mx=0,my=0,ox=0,oy=0,PARALLAX=-52;
+        window.addEventListener("pointermove",function(e){var rect=canvas.getBoundingClientRect();mx=(((e.clientX-rect.left)/rect.width)-.5)*2;my=(((e.clientY-rect.top)/rect.height)-.5)*2;},{passive:true});
+        function loop(t){t=t||0;ctx.clearRect(0,0,W,H);
+          ox+=(mx-ox)*.05;oy+=(my-oy)*.05;
+          for(var i=0;i<stars.length;i++){var s=stars[i],tw=.5+.5*Math.sin(t*.001*s.spd+s.ph),a=s.alpha*(.35+.65*tw);draw(s,s.x+ox*PARALLAX*s.z,s.y+oy*PARALLAX*s.z,a);}
+          requestAnimationFrame(loop);}
+        loop();
+        })();
+        </script>
+
+  <!-- Canvas để vẽ cực quang -->
+  <canvas class="aurora-canvas" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+  
+  <!-- Lớp phủ nội dung -->
+ 
+
+  <style>
+    .aurora-hero .aurora-canvas {
+      filter: saturate(1.1) brightness(1.1);
+    }
+  </style>
+
+  <script>
+  (function(){
+  var CFG={"gspeed":1,"strips":[{"x":-0.84,"y":-0.7,"l":1.16,"w":0.1,"wl":0.9,"h":1.04,"p":-1.45,"ws":0.25,"rs":1,"tlt":-11,"samp":0,"sfreq":0.16,"piv":1.8,"md":-1.0,"ea":0,"wg":0,"i":1.5,"ca":"#0df2a1","cb":"#9d0df2"},{"x":-0.8,"y":0.09,"l":0.81,"w":0.13,"wl":1.2,"h":0.3,"p":0.65,"ws":0.95,"rs":-4,"tlt":-14,"samp":0,"sfreq":0.13,"piv":0,"md":-1.0,"ea":0,"wg":-0.12,"i":1.1,"ca":"#0df2a1","cb":"#9d0df2"},{"x":0.42,"y":-0.21,"l":1.57,"w":0.06,"wl":0.9,"h":0.98,"p":-1.8,"ws":1,"rs":1,"tlt":-11,"samp":0,"sfreq":0.16,"piv":1.8,"md":-1.0,"ea":0,"wg":0,"i":1.48,"ca":"#0df2a1","cb":"#9d0df2"},{"x":0.67,"y":-0.5,"l":1.33,"w":0.08,"wl":0.86,"h":0.84,"p":-0.7,"ws":1,"rs":-0.7,"tlt":-11,"samp":0,"sfreq":0,"piv":1.8,"md":-1.0,"ea":8,"wg":0.12,"i":1.52,"ca":"#0df2a1","cb":"#f20db1"}]};
+  var VERT="\nattribute vec2 a;\nvoid main(){ gl_Position = vec4(a, 0.0, 1.0); }\n";
+  var FRAG="\n#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n\nuniform vec2  uRes;\nuniform float uTime;\nuniform float uFade;\nuniform vec2  uMouse;\n\n// 4 independent half-width curtains (2 left, 2 right)\nuniform float uX[4];    // horizontal centre (normalised -1..1)\nuniform float uY[4];    // vertical centre\nuniform float uW[4];    // wave amplitude (uốn lượn)\nuniform float uWL[4];   // wavelength (bước sóng)\nuniform float uL[4];    // horizontal length\nuniform float uH[4];    // vertical height\nuniform float uP[4];    // per-strip pace (depth/parallax)\nuniform float uI[4];    // independent brightness\nuniform float uWS[4];   // wave speed (tilde)\nuniform float uRS[4];   // ray speed\nuniform float uTlt[4];  // base tilt angle (radians)\nuniform float uSAmp[4]; // pendulum swing amplitude (radians)\nuniform float uSFreq[4];// pendulum swing speed/frequency\nuniform float uPiv[4];  // sweep anchor: 0 = bottom fixed, higher = top fixed\nuniform float uMDir[4]; // mouse-follow direction: 0 = off, +1 = follow, -1 = oppose\nuniform float uEA[4];   // bottom-edge angle (radians) — shear along X\nuniform float uWG[4];   // wavelength gradient (+ grows toward the right, - shrinks)\nuniform vec3  uCA[4];\nuniform vec3  uCB[4];\n\n/* ---- hash / noise / fbm ---- */\nfloat hash(vec2 p){\n  p = fract(p * vec2(234.34, 435.345));\n  p += dot(p, p + 34.23);\n  return fract(p.x * p.y);\n}\nfloat noise(vec2 p){\n  vec2 i = floor(p); vec2 f = fract(p);\n  vec2 u = f*f*(3.0-2.0*f);\n  return mix(mix(hash(i), hash(i+vec2(1,0)), u.x),\n             mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), u.x), u.y);\n}\nconst mat2 RM = mat2(.80,.60,-.60,.80);\nfloat fbm(vec2 p){\n  float s=0.0, a=0.5;\n  for(int i=0;i<5;i++){ s+=a*noise(p); p=RM*p*2.02+vec2(3.1,1.7); a*=.55; }\n  return s;\n}\n\n/* (stars removed — aurora only, transparent background) */\n\n/* ---- one half-width aurora curtain with multi-axis depth motion ---- */\nvec3 curtain(vec2 p, float tt, float tRaw, float xc, float yBase, float wavy, float wl, float xLength, float height, vec3 cBot, vec3 cTop, float seed, float asp, float waveSpeed, float raySpeed, float tilt, float swingAmp, float swingFreq, float pivot, float edgeAngle, float wlGrad){\n  float hn = p.x / asp;          // normalised horizontal position [-1,1]\n  float dx = hn - xc;            // local horizontal coordinate\n  float safeWL = max(wl, 0.03);\n\n  // ---- Searchlight sweep -------------------------------------------------\n  // The pivot decides which end stays nailed in place:\n  //   pivot = 0      -> base (bottom) anchored, the tail sweeps\n  //   pivot ~ 1..3   -> the upper tail is anchored, the bright bottom sweeps\n  // Raw global time is used so the sweep keeps going even when drift is 0.\n  float swingPhase = tRaw * swingFreq + seed * 1.5;\n  float dynamicAngle = tilt + swingAmp * sin(swingPhase);\n  if (abs(dynamicAngle) > 0.0001) {\n    float pivotY = yBase + pivot * max(height, 0.02);\n    float ca = cos(dynamicAngle), sa = sin(dynamicAngle);\n    float rx = dx * asp;\n    float ry = p.y - pivotY;\n    float rotX = rx * ca - ry * sa;\n    float rotY = rx * sa + ry * ca;\n    dx = rotX / asp;\n    p.y = rotY + pivotY;\n  }\n\n  // bottom-edge angle: shear along X — slants the bright lower edge\n  // independently from the tilt/pivot rotation of the whole curtain\n  float edgeSlope = tan(edgeAngle);\n\n  // lateral drift: a gentle global parallax that is kept consistent across strips\n  // (the old seed-based offset made the leftmost strip nearly static while\n  //  the right strips drifted many times faster)\n  float scroll = tt * 0.04;\n  float lx = dx + scroll * (1.0 + 0.18 * seed) * 0.04;\n\n  // A clear travelling tilde (~): wavelength controls crest spacing,\n  // while a faint harmonic keeps the edge organic without hiding the sine.\n  // 3-axis time so each strip can be tuned independently\n  float ws = waveSpeed;\n  float tWave = tt * 0.62 * ws;          // speed of the tilde edge\n  float tFbm  = tt * 0.025 * ws * 0.6;  // speed of the organic distortion\n  float tBob  = tt * 0.20 * ws;          // speed of the slow depth bob\n\n  // wavelength may grow or shrink progressively along the curtain —\n  // log-phase keeps the crests coherent instead of just stretching the sine\n  float wlX = max(safeWL * (1.0 + wlGrad * lx), 0.03);\n  float phase;\n  if (abs(wlGrad) < 0.001) {\n    phase = (lx / safeWL) * 6.2831853;\n  } else {\n    phase = (6.2831853 / (safeWL * wlGrad)) * log(max(1.0 + wlGrad * lx, 0.1));\n  }\n  phase -= tWave; phase += seed * 1.37;\n  float wave = sin(phase) * wavy;\n  wave += sin(phase * 0.5 + 1.4) * wavy * 0.16;\n  wave += (fbm(vec2(lx / wlX * 0.32 - tFbm, seed * 8.7)) - 0.5) * wavy * 0.12;\n  wave += sin(tBob + seed*2.0) * 0.025 * wavy;\n  float center = yBase + wave + edgeSlope * dx;\n  float dist = p.y - center;\n  if(dist < -0.15) return vec3(0.0);\n\n  // vertical rays, density breathing => sense of approaching/receding\n  float rs = raySpeed;\n  float rayScale = 0.12 + 0.04*sin(tt*0.3*rs + seed);\n  float tRay = tt * 0.03 * rs;\n  vec2 rc = vec2(lx*3.5/wlX + fbm(vec2(lx*0.5/wlX, tt*0.02*rs)), p.y*rayScale - tRay + seed);\n  float ray  = fbm(rc*4.5);\n  float rayS = mix(0.4, 1.0, ray);\n\n  float fade = (dist>=0.0) ? exp(-dist/max(height,0.02)) : smoothstep(0.0,1.0,(dist+0.15)/0.15);\n  float I = fade*rayS*0.9;\n\n  // large drifting cloud => brightness patches at different depths\n  float depth = 0.7 + 0.3*fbm(vec2(lx*0.8/wlX - tt*0.05, seed*5.0 + p.y*0.5));\n  I *= depth;\n\n  float gf = clamp(dist*1.1, 0.0, 1.0);\n  vec3 col = mix(cBot, cTop, gf) * I;\n\n  // curtain only lives in its own horizontal region (no full-screen span)\n  float xSpan = max(xLength, 0.02) * 0.5;\n  float hmask = 1.0 - smoothstep(xSpan*0.55, xSpan, abs(dx));\n  col *= hmask;\n  return col;\n}\n\nvoid main(){\n  float mn = min(uRes.x, uRes.y);\n  vec2 uv = (gl_FragCoord.xy*2.0 - uRes)/mn;\n  float asp = uRes.x/mn;\n  float t = uTime;\n  vec2 mo = uMouse * 0.09;   // magnitude of the mouse offset\n\n  vec3 aurora = vec3(0.0);\n  for(int i=0;i<4;i++){\n    // per-strip mouse reaction: 0 = fixed, +1 follow, -1 oppose (arbitrary scaling ok)\n    vec2 pS = uv - mo * uMDir[i];\n    pS.y -= (pS.x*pS.x)*0.08;\n    // paired seeds: strips 0&2 share one seed, 1&3 share another, so the\n    // left pair and the right pair behave as exact copies of each other\n    float sd = 0.9 + 0.3 * mod(float(i), 2.0);\n    aurora += curtain(pS, t*uP[i], t, uX[i], uY[i], uW[i], uWL[i], uL[i], uH[i], uCA[i], uCB[i], sd, asp, uWS[i], uRS[i], uTlt[i], uSAmp[i], uSFreq[i], uPiv[i], uEA[i], uWG[i]) * uI[i];\n  }\n\n  // filmic tone on aurora only (transparent background)\n  vec3 col = 1.0 - exp(-aurora*1.15);\n\n  float vig = 1.0 - 0.25*smoothstep(0.4,1.5,length(uv*vec2(0.7,1.0)));\n  col *= vig;\n\n  // alpha = aurora strength, rolled through the same filmic curve + fade-in\n  float rawPeak = max(aurora.r, max(aurora.g, aurora.b));\n  float a = (1.0 - exp(-rawPeak*1.15)) * vig * uFade;\n\n  col = col * uFade + (hash(gl_FragCoord.xy + fract(t)*11.13) - 0.5)*(1.5/255.0);\n\n  gl_FragColor = vec4(clamp(col,0.0,1.0), clamp(a,0.0,1.0));\n}\n";
+  var host=document.currentScript.closest('.aurora-hero');
+  var canvas=host.querySelector('.aurora-canvas');
+  var gl=canvas.getContext('webgl',{alpha:true,antialias:false,depth:false,stencil:false,premultipliedAlpha:false,powerPreference:'high-performance'})||canvas.getContext('experimental-webgl',{alpha:true,premultipliedAlpha:false});
+  if(!gl){return;}
+  function sh(type,src){var s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){console.error('Aurora shader:',gl.getShaderInfoLog(s));return null;}return s;}
+  var vs=sh(gl.VERTEX_SHADER,VERT),fs=sh(gl.FRAGMENT_SHADER,FRAG);
+  if(!vs||!fs){return;}
+  var pr=gl.createProgram();gl.attachShader(pr,vs);gl.attachShader(pr,fs);gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){console.error('Aurora link:',gl.getProgramInfoLog(pr));return;}
+  gl.useProgram(pr);
+  var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  var aLoc=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(aLoc);gl.vertexAttribPointer(aLoc,2,gl.FLOAT,false,0,0);
+  var U={};['uRes','uTime','uFade','uMouse','uX[0]','uY[0]','uW[0]','uWL[0]','uL[0]','uH[0]','uP[0]','uI[0]','uWS[0]','uRS[0]','uTlt[0]','uSAmp[0]','uSFreq[0]','uPiv[0]','uMDir[0]','uEA[0]','uWG[0]','uCA[0]','uCB[0]'].forEach(function(n){U[n]=gl.getUniformLocation(pr,n);});
+  var X=new Float32Array(4),Y=new Float32Array(4),W=new Float32Array(4),WL=new Float32Array(4),L=new Float32Array(4),H=new Float32Array(4),P=new Float32Array(4),I=new Float32Array(4),WS=new Float32Array(4),RS=new Float32Array(4),TLT=new Float32Array(4),SAMP=new Float32Array(4),SFREQ=new Float32Array(4),PIV=new Float32Array(4),MDIR=new Float32Array(4),EA=new Float32Array(4),WG=new Float32Array(4),CA=new Float32Array(12),CB=new Float32Array(12);
+  function h2r(h){return [parseInt(h.slice(1,3),16)/255,parseInt(h.slice(3,5),16)/255,parseInt(h.slice(5,7),16)/255];}
+  CFG.strips.forEach(function(st,i){X[i]=st.x;Y[i]=st.y;W[i]=st.w;WL[i]=st.wl;L[i]=st.l;H[i]=st.h;P[i]=st.p;I[i]=st.i;WS[i]=st.ws;RS[i]=st.rs;TLT[i]=st.tlt*Math.PI/180;SAMP[i]=st.samp*Math.PI/180;SFREQ[i]=st.sfreq;PIV[i]=st.piv;MDIR[i]=st.md||0;EA[i]=(st.ea||0)*Math.PI/180;WG[i]=st.wg||0;var a=h2r(st.ca),b=h2r(st.cb);CA[i*3]=a[0];CA[i*3+1]=a[1];CA[i*3+2]=a[2];CB[i*3]=b[0];CB[i*3+1]=b[1];CB[i*3+2]=b[2];});
+  var mxT=0,myT=0,mx=0,my=0;
+  window.addEventListener('pointermove',function(e){var r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;mxT=((e.clientX-r.left)/r.width)*2-1;myT=-(((e.clientY-r.top)/r.height)*2-1);},{passive:true});
+  function resize(){var dpr=Math.min(window.devicePixelRatio||1,2);var w=Math.max(1,Math.round(canvas.clientWidth*dpr));var h=Math.max(1,Math.round(canvas.clientHeight*dpr));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h);}}
+  resize();window.addEventListener('resize',resize,{passive:true});
+  var t0=performance.now(),tAcc=0,fade=0;
+  function loop(now){
+    var dt=Math.min(0.05,(now-t0)/1000);t0=now;
+    tAcc+=dt*CFG.gspeed;fade=Math.min(1,fade+dt/2.6);
+    mx+=(mxT-mx)*Math.min(1,dt*2.5);my+=(myT-my)*Math.min(1,dt*2.5);
+    resize();
+    gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform2f(U.uRes,canvas.width,canvas.height);
+    gl.uniform1f(U.uTime,tAcc);
+    gl.uniform1f(U.uFade,fade*fade*(3-2*fade));
+    gl.uniform2f(U.uMouse,mx,my);
+    gl.uniform1fv(U['uX[0]'],X);gl.uniform1fv(U['uY[0]'],Y);gl.uniform1fv(U['uW[0]'],W);gl.uniform1fv(U['uWL[0]'],WL);gl.uniform1fv(U['uL[0]'],L);gl.uniform1fv(U['uH[0]'],H);gl.uniform1fv(U['uP[0]'],P);gl.uniform1fv(U['uI[0]'],I);gl.uniform1fv(U['uWS[0]'],WS);gl.uniform1fv(U['uRS[0]'],RS);gl.uniform1fv(U['uTlt[0]'],TLT);gl.uniform1fv(U['uSAmp[0]'],SAMP);gl.uniform1fv(U['uSFreq[0]'],SFREQ);gl.uniform1fv(U['uPiv[0]'],PIV);gl.uniform1fv(U['uMDir[0]'],MDIR);gl.uniform1fv(U['uEA[0]'],EA);gl.uniform1fv(U['uWG[0]'],WG);
+    gl.uniform3fv(U['uCA[0]'],CA);gl.uniform3fv(U['uCB[0]'],CB);
+    gl.drawArrays(gl.TRIANGLES,0,3);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+  </script>
+
+</section>
+    <canvas id="c" class="fixed top-0 left-0 w-full h-full z-0 pointer-events-none opacity-0"></canvas>
+
+    <!--  ĐỒ HỌA NỀN CỰC QUANG VÀ KHÔNG GIAN ĐÊM (Cố định ở khu vực Hero 980px đầu tiên) -->
+    <div class="cosmic-background">
+        <div class="aurora-container hidden">
+            <div class="aurora-curtain curtain-1 opacity-90"></div>
+            <div class="aurora-curtain curtain-2"></div>
+            <div class="aurora-curtain curtain-2 opacity-10"></div>
+            <div class="aurora-curtain curtain-4 opacity-10"></div>
+        </div>
+        <!-- Aurora Effect -->
+        
+        <!--div class="nebula-wisps">
+            <div class="central-bloom-glow"></div>
+            <div class="wisp wisp-1"></div>
+            <div class="wisp wisp-2"></div>
+            <div class="wisp wisp-3"></div>
+        </div-->
+
+        <div class="stars-background">
+            <div class="stars-glow-layer hidden"></div>
+            <div class="stars-glow-layer-medium hidden"></div>
+            <div class="stars hidden" id="stars"></div>
+        </div>
+    </div>
+
+    <div class="auroraglow-container hidden">
+            <div class="aurora aurora-1"></div>
+            <div class="aurora aurora-2"></div>
+            <div class="aurora aurora-3"></div>
+            <div class="aurora aurora-4"></div>
+        </div>
+    
+    <!--div class="starsky" id="ministarContainer"></div-->
+    <div id="shootingStarsContainer"></div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="fixed top-0 left-0 w-full z-40 border-b border-white/5 nav-blur bg-slate-950/15 transition-all duration-200 gpu-layer will-change-transform">
+        <div class="max-w-7xl mx-auto px-7 sm:px-8 lg:px-8 py-5 flex items-center justify-between relative z-50">
+            
+            <!-- Brand Logo chính thức mới -->
+            <a href="#top" class="flex items-center group relative h-10 w-44" aria-label="Về đầu trang XTrading">
+                <div class="absolute -inset-2 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 rounded-full blur-lg opacity-0 group-hover:opacity-0 transition-opacity duration-300"></div>
+                <div class="relative w-full h-full flex items-center scale-100 group-hover:scale-100 transition-transform duration-200">
+                    <svg class="w-full h-full" viewBox="0 0 1384 414" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                        <g>
+                            <g>
+                                <path d="M174.364,349.43c26.604,-38.667 53.209,-77.328 79.813,-115.989c26.451,38.656 52.903,77.312 79.349,115.973c0,0 -26.388,-38.703 0,0l39.115,-60.448l135.591,-209.553l-31.765,-79.412l-146.308,226.116l-76.035,-110.596l-0.005,0l-76.046,110.596l-146.308,-226.116l-31.765,79.412c45.151,69.92 174.364,270.017 174.364,270.017" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M135.752,0.03l-88.108,0l138.779,214.186l45.289,-65.872l-95.959,-148.313Z" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M254.094,112.185l-77.111,-112.148l154.265,-0.037l-77.154,112.185Z" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M321.72,214.178l-45.257,-65.82l96.007,-148.355l88.118,0l-138.81,214.212" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M43.972,55.562c-0.744,0 -0.749,1.161 0,1.161c0.744,0 0.749,-1.161 0,-1.161" style="fill:#fff;fill-rule:nonzero;"/>
+                            </g>
+                            
+                        </g>
+                    </svg>
+                </div>
+            </a>
+            
+            <!-- Navigation Links -->
+            <nav class="hidden lg:flex items-center gap-8 text-[14px] font-medium text-slate-300 absolute left-1/2 -translate-x-1/2">
+                <a href="#intro" class="hover:text-white transition-all duration-200 font-bold underline-from-center" >Bộ chỉ báo</a>
+                <a href="#pricing" class="hover:text-white transition-all duration-200 font-bold flex items-center gap-1 underline-from-center">Bảng giá</a>
+                <a href="#commit" class="hover:text-white transition-all duration-200 font-bold underline-from-center">Chính sách</a>
+                <!--a href="#compare" class="hover:text-white transition-all duration-200 font-bold underline-from-center">So sánh</a-->
+                
+                <a href="#faq" class="hover:text-white transition-all duration-200 font-bold underline-from-center">FAQ</a>
+
+            </nav>
+
+            <div class="hidden lg:flex items-center gap-3">
+                <a href="#pricing" class="btn-getaccess">Nhận truy cập ✧</a>
+
+            </div>
+
+            <!-- Hamburger menu di động -->
+            <button id="menu-btn" type="button" aria-label="Mở menu điều hướng" aria-controls="mobile-menu" aria-expanded="false" class="lg:hidden p-2 text-slate-400 hover:text-white border border-white/5 rounded-xl hover:bg-white/5 transition-all cursor-pointer">
+                <svg id="menu-icon-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="4" x2="20" y1="12" y2="12"></line>
+                    <line x1="4" x2="20" y1="6" y2="6"></line>
+                    <line x1="4" x2="20" y1="18" y2="18"></line>
+                </svg>
+                <svg id="menu-icon-close" class="hidden" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="relative z-10 pt-20">
+        <!-- HERO SECTION (Chỉ phần này có dải cực quang động) #436fff #1bd1d7 [linear-gradient(180deg,rgba(59,171,246,1)_0%,rgba(59,171,246,1)_35%,rgba(103,232,249,1)_45%,rgba(255,255,255,1)_50%,rgba(103,232,249,1)_55%,rgba(59,130,246,1)_65%,rgba(25,83,255,1)_100%)]-->
+        <section class="relative pt-24 pb-16 px-6 lg:px-8 max-w-7xl mx-auto text-center space-y-7 sm:space-y-8">
+            <h1 class="hero-fluid-title font-bold tracking-tight text-white max-w-5xl mx-auto hero-title font-sans">
+                Truy vết dòng tiền<br> 
+                <span class="text-transparent bg-clip-text bg-[linear-gradient(180deg,#3398ff_0%,#3398ff_35%,#67e8f9_45%,#d8f6ff_50%,#67e8f9_55%,#3398ff_70%,#1953ff_100%)] font-bold ">Dẫn Lối Thành Công </span>
+            </h1>
+            <p class="text-slate text-xl sm:text-[26px] max-w-3xl mx-auto hero-copy font-normal text-center space-y-2">
+                <span class="block">
+                    Hệ thống chỉ báo kỹ thuật 
+                    <br class="sm:hidden"> truy vết dòng tiền.
+                </span>
+                <span class="block">
+                    Chủ động trên thị trường & 
+                    <br class="sm:hidden"> vượt qua con sóng lớn.
+                </span>
+            </p>
+        </section>
+        
+        <div class="flex justify-center mb-10 px-6 relative z-30">
+            <a href="#pricing" class="rotating-border-wrapper" aria-label="Nhận miễn phí">
+                <!-- Khung viền xoay siêu tinh tế mảnh 1.2px có đục rỗng CSS mask -->
+                <div class="rotating-border-glow-layer">
+                    <div class="rotating-border-gradient"></div>
+                </div>
+                
+                <!-- Nút bấm mờ trong suốt (Glassmorphism) nền Slate mờ hòa vào tối không gian -->
+                <span class="rotating-border-btn whitespace-nowrap responsive-text">
+                    Trải nghiệm không rủi ro 
+                    <svg width="28" height="28" viewBox="0 0 800 800" class="hover-blink-svg transition-all duration-300">
+                        <g transform="matrix(1.882154,0,0,1.882154,120.500508,-0.000471)">
+                            <g transform="matrix(0.768307,0.768307,-0.768307,0.768307,184.68262,-51.846975)">
+                                <g>
+                                    <path d="M147.655,71.797C129.708,71.797 115.107,86.398 115.107,104.345C115.107,122.292 129.708,136.893 147.655,136.893C165.602,136.893 180.203,122.292 180.203,104.345C180.203,86.398 165.603,71.797 147.655,71.797ZM147.655,121.576C138.154,121.576 130.424,113.846 130.424,104.345C130.424,94.844 138.154,87.114 147.655,87.114C157.156,87.114 164.886,94.844 164.886,104.345C164.886,113.846 157.156,121.576 147.655,121.576Z" style="fill:white;fill-rule:nonzero;"/>
+                                    <path d="M245.437,183.301C236.149,169.046 224.97,162.494 219.133,159.855C222.267,139.79 223.319,119.76 220.26,102.66C209.149,40.542 155.333,3.222 153.048,1.663C149.795,-0.554 145.515,-0.554 142.262,1.663C139.977,3.221 86.161,40.542 75.051,102.659C71.955,119.971 73.072,140.286 76.297,160.6C70.175,163.643 60.076,170.237 51.563,183.3C35.563,207.855 32.876,242.759 43.578,287.042C44.318,290.107 46.521,292.611 49.466,293.737C50.573,294.16 51.73,294.367 52.882,294.367C54.798,294.367 56.697,293.792 58.318,292.675L104.981,260.494C106.221,263.598 107.037,265.533 107.254,266.043C108.756,269.577 112.225,271.871 116.064,271.871L138.082,271.871L138.082,287.427C138.082,292.714 142.368,297 147.655,297C152.942,297 157.228,292.714 157.228,287.427L157.228,271.871L179.246,271.871C183.085,271.871 186.554,269.577 188.056,266.043C188.293,265.485 189.249,263.215 190.693,259.579L238.682,292.675C240.303,293.792 242.203,294.367 244.118,294.367C245.27,294.367 246.428,294.159 247.534,293.737C250.479,292.611 252.681,290.108 253.422,287.042C264.123,242.76 261.437,207.856 245.437,183.301ZM147.655,21.617C153.849,26.649 164.477,36.133 174.778,49.301L120.532,49.301C130.835,36.13 141.464,26.647 147.655,21.617ZM59.265,268.765C48.817,211.04 68.632,188.496 80.088,180.533C85.245,204.034 92.36,226.157 98.025,242.034L59.265,268.765ZM172.791,252.725L157.228,252.725L157.228,230.799C157.228,225.512 152.641,220.234 147.354,220.234C142.067,220.234 138.082,225.512 138.082,230.799L138.082,252.725L122.515,252.725C113.941,230.991 85.397,153.55 93.897,106.03C96.682,90.461 113.32,61.237 120.532,49.301L174.778,49.301C181.99,61.237 198.628,90.461 201.412,106.03C209.901,153.495 181.364,230.978 172.791,252.725ZM237.736,268.765L197.62,241.099C203.308,225.071 210.364,202.956 215.436,179.553C226.546,186.558 248.648,208.471 237.736,268.765Z" style="fill:white;fill-rule:nonzero;"/>
+                                </g>
+                                <g transform="matrix(0.587016,-0.587016,0.587016,0.587016,-135.092074,117.757761)">
+                                    <path d="M3.471,432.083C-1.157,427.455 -1.157,419.95 3.471,415.322L48.705,370.088C53.333,365.46 60.838,365.46 65.466,370.088C70.094,374.716 70.094,382.221 65.466,386.849L20.232,432.083C15.604,436.711 8.099,436.712 3.471,432.083Z" style="fill:white;fill-rule:nonzero;"/>
+                                </g>
+                                <g transform="matrix(0.587016,-0.587016,0.587016,0.587016,-83.240781,116.208305)">
+                                    <path d="M3.471,432.083C-1.157,427.455 -1.157,419.95 3.471,415.322L48.705,370.088C53.333,365.46 60.838,365.46 65.466,370.088C70.094,374.716 70.094,382.221 65.466,386.849L20.232,432.083C15.604,436.711 8.099,436.712 3.471,432.083Z" style="fill:white;fill-rule:nonzero;"/>
+                                </g>
+                                <g transform="matrix(0.587016,-0.587016,0.587016,0.587016,-109.166427,139.585774)">
+                                    <path d="M3.471,432.083C-1.157,427.455 -1.157,419.95 3.471,415.322L48.705,370.088C53.333,365.46 60.838,365.46 65.466,370.088C70.094,374.716 70.094,382.221 65.466,386.849L20.232,432.083C15.604,436.711 8.099,436.712 3.471,432.083Z" style="fill:white;fill-rule:nonzero;"/>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                    
+                </span>
+            </a>
+        </div>          
+
+        <!--DẢI MARQUEE CHẠY NGANG-->
+        <div  class="section-wrapper mt-6">
+    <h2 class="title text-xs text-slate-100 font-normal"> CÁC THỊ TRƯỜNG HỖ TRỢ </h2>
+    <div class="marquee-container">
+        <div class="marquee-track">
+            
+            <div id="intro" class="ads-supported-markets__slide">
+                <span class="keywords"><img src="img/b_icon.webp" alt="Crypto" class="ads-supported-markets__image" decoding="async">CRYPTO</span>
+            </div>
+            
+            <div class="ads-supported-markets__slide">
+                <span class="keywords"><img src="img/c_icon.webp" alt="Forex" class="ads-supported-markets__image" decoding="async">FOREX</span>
+            </div>
+            
+            <div class="ads-supported-markets__slide">
+                <span class="keywords"><img src="img/a_icon.webp" alt="Hàng hóa" class="ads-supported-markets__image" decoding="async">HÀNG HÓA</span>
+            </div>
+            
+            <div class="ads-supported-markets__slide">
+                <span class="keywords"><img src="img/i_icon.webp" alt="Chỉ số" class="ads-supported-markets__image" decoding="async">CHỈ SỐ</span>
+            </div>
+            
+            <div class="ads-supported-markets__slide">
+                <span class="keywords"><img src="img/s_icon.webp" alt="Cổ phiếu" class="ads-supported-markets__image" decoding="async">CỔ PHIẾU</span>
+            </div>
+
+            <div class="ads-supported-markets__slide">
+                <span class="keywords"><img src="img/b_icon.webp" alt="Crypto" class="ads-supported-markets__image" decoding="async">CRYPTO</span>
+            </div>
+            
+            <div class="ads-supported-markets__slide">
+                <span class="keywords"><img src="img/c_icon.webp" alt="Forex" class="ads-supported-markets__image" decoding="async">FOREX</span>
+            </div>
+            
+            <div class="ads-supported-markets__slide">
+                <span class="keywords"><img src="img/a_icon.webp" alt="Hàng hóa" class="ads-supported-markets__image" decoding="async">HÀNG HÓA</span>
+            </div>
+            
+            <div class="ads-supported-markets__slide">
+                <span class="keywords"><img src="img/i_icon.webp" alt="Chỉ số" class="ads-supported-markets__image" decoding="async">CHỈ SỐ</span>
+            </div>
+            
+            <div class="ads-supported-markets__slide">
+                <span class="keywords"><img src="img/s_icon.webp" alt="Cổ phiếu" class="ads-supported-markets__image" decoding="async">CỔ PHIẾU</span>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+    <!-- KHUNG ĐIỀU PHỐI CHỨA 3 Khung INTRO -->
+    <div id="simulator-container" class="transition-all duration-300 mx-auto w-full">
+        <div class="container">
+                
+                <!-- SECTION GIỚI THIỆU CHÍNH (ẢNH TRÁI, CHỮ PHẢI) -->
+
+            <div  class="fade-in-section text-center max-w-3xl mx-auto space-y-4 mb-16">
+            <h2 class="text-3xl sm:text-5xl  font-bold leading-[1.6] pt-4">
+                <span class="textGradient-ttl text-[#f0fdff] bg-clip-text inline-block py-2">Hoàn toàn <br class="md:hidden">nắm thế chủ động
+                </span>
+            </h2>
+            <p class="text-[#f0fdff] text-xl sm:text-[26px] text-pretty opacity-95">Song hành cùng XTrading, vững vàng bước lên phía trước.</p>
+        </div>
+
+        <section class="fade-in-section content-section relative ">
+            <div class="image-zone">
+                <div class="image-track">
+                    <div class="image-item"><img src="img/bigmoney1.webp" alt="Biểu đồ kỹ thuật theo dấu dòng tiền 1"></div>
+                    <div class="image-item"><img src="img/bigmoney_botline.webp" alt="Biểu đồ kỹ thuật đường tạo đáy"></div>
+                    <div class="image-item"><img src="img/bigmoney3.webp" alt="Biểu đồ kỹ thuật lực mua bán"></div>
+                    <div class="image-item"><img src="img/bigmoney_SR.webp" alt="Biểu đồ kỹ thuật vùng hỗ trợ kháng cự"></div>
+                    <div class="image-item"><img src="img/bigmoney4.webp" alt="Biểu đồ kỹ thuật bẫy tăng giá"></div>
+                    <div class="image-item"><img src="img/bigmoney5.webp" alt="Biểu đồ kỹ thuật dòng tiền dịch chuyển"></div>
+                    <div class="image-item"><img src="img/bigmoney_squeezing.webp" alt="Biểu đồ kỹ thuật thắt Bollinger Band"></div>
+                    <div class="image-item"><img src="img/bigmoney6.webp" alt="Biểu đồ kỹ thuật lực bán"></div>
+                    <div class="image-item"><img src="img/bigmoney_bullbear.webp" alt="Biểu đồ kỹ thuật giai đoạn bull bear"></div>
+                    <div class="image-item"><img src="img/bigmoney8.webp" alt="Biểu đồ kỹ thuật lực bán"></div>
+                </div>
+            </div>
+            <div class="text-zone relative pb-16 md:pb-6">
+                <div class="relative z-10 text-pretty">
+                <h2><span class="bg-gradient-to-r from-[#f0fdff] to-[#34d399] bg-clip-text text-transparent">
+                Chỉ báo BigMoney
+            </span></h2>
+                <p class= "leading-normal">Không còn những dự đoán mơ hồ, Bạn quyết định tất cả với công cụ mạnh mẽ trong tay.</p>
+                
+                
+                <div class="w-button-wrapper">
+            
+                    <div class="w-button-glow-container">
+                        <div class="w-glow-active"></div>
+                        <div class="w-glow-dim"></div>
+                    </div>
+
+                    <a href="https://vn.tradingview.com/script/lTeNB8SC-XTrading-BigMoney/" target="_blank" rel="noopener" 
+                   class="w-button-main w-fit flex flex-col items-center justify-center p-[2px] rounded-full bg-gradient-to-br from-[#34d399] via-[#2962ff] to-[#d600f8] font-bold text-sm text-center group">
+                    
+                    <div class="flex items-center gap-2 py-3 px-6 rounded-full bg-[#020920]/90 text-[#f0fdff] transition-all duration-300">
+                        <svg width="20" height="20" viewBox="0 0 47 47" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                            <g transform="matrix(1,0,0,1,-5.5,-5.5)">
+                                <g transform="matrix(1,0,0,1,-2.5,-1.5)">
+                                    <path d="M46,27L46,15.06C46,13.453 45.362,11.912 44.225,10.775C43.088,9.638 41.547,9 39.94,9C33.297,9 22.702,9 16.06,9C14.453,9 12.911,9.638 11.775,10.775C10.638,11.911 10,13.453 10,15.06C10,21.914 10,33.012 10,39.888C10,43.263 12.736,46 16.112,46C20.986,46 27,46 27,46"/>
+                                    <path d="M44,33L44,52"/>
+                                    <path d="M34,42.5L53,42.5"/>
+                                    <path d="M18,32C18.018,31.968 25,25 25,25L32,32L39,25"/>
+                                </g>
+                            </g>
+                        </svg>
+                        <span>Sử dụng trên biểu đồ</span>
+                        </div>                            
+                    </a>
+
+                </div>
+            </div>
+        </div>
+            
+        </section>
+
+            <div class="fade-in-section text-center max-w-6xl mx-auto space-y-4 mb-16">
+        <h2 class="text-3xl sm:text-5xl  font-bold leading-[1.3] pt-4">
+        <span class="textGradient-ttl text-[#f0fdff] bg-clip-text block py-2 leading-[1.6]">
+        Nỗ lực bền bỉ, <br class="md:hidden">Kết quả hoàn mỹ</span>
+        </h2>
+        <p class="text-[#f0fdff] text-xl sm:text-[26px] leading-normal opacity-95">Thành công được tạo ra ngay trong tầm tay bạn, <br class="hidden sm:inline">đã đến lúc quyết định.</p>
+        </div>
+
+        <section class="fade-in-section content-section relative reverse-layout">
+            <div class="image-zone image-zone--bt">
+                <div class="preview-wrap">
+                <!-- XTrading BigTrade — image zone (dán vào .image-zone) -->
+<style>
+.bt-widget{box-sizing:border-box;display:block;width:100%;height:auto;-webkit-tap-highlight-color:transparent}
+.bt-widget *,.bt-widget *::before,.bt-widget *::after{box-sizing:border-box}
+.bt-frame{display:block;height:auto;border-radius:16px;padding:1.5px;background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.07) 50%,rgba(255,255,255,.15));box-shadow:0 24px 70px -24px rgba(41,98,255,.55)}
+/* Mobile-first: widget giãn theo nội dung (height:auto).
+   Thumbnail row (flex:1) chỉ thực sự "giãn lấp đầy khoảng trống" khi
+   .bt-inner có một chiều cao thật từ khung cha — tức là trên desktop khi
+   .image-zone bị flex kéo cao hơn phần chữ. Lúc đó height:100% ở desktop
+   media query bên dưới mới kích hoạt. Trên mobile height luôn là auto. */
+.bt-inner{display:flex;flex-direction:column;gap:10px;padding:10px;border-radius:14px;background:#050d24;height:auto}
+.bt-stage{position:relative;width:100%;min-width:0;flex:0 0 auto}
+.bt-compare{--p:50%;position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;border-radius:8px;background:#0a1228;cursor:ew-resize;touch-action:none;user-select:none;outline:none;contain:paint;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.bt-compare:focus-visible{box-shadow:inset 0 0 0 2px rgba(41,98,255,.7)}
+.bt-layer{position:absolute;inset:0;transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.bt-layer img{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
+.bt-after img{filter:saturate(1.12)}
+.bt-before{clip-path:inset(0 calc(100% - var(--p)) 0 0);will-change:clip-path}
+.bt-before img{filter:brightness(.78) contrast(1.05) grayscale(1)}
+.bt-before-veil{position:absolute;inset:0;background:rgba(2,9,32,.15);pointer-events:none}
+.bt-after-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(2,9,32,.55),transparent 55%);pointer-events:none}
+.bt-handle{position:absolute;inset:0 auto 0 0;width:100%;z-index:3;pointer-events:none;transform:translate3d(var(--p),0,0);will-change:transform}
+.bt-line{position:absolute;inset:0 auto 0 0;width:2px;transform:translateX(-50%);background:linear-gradient(to bottom,transparent,rgba(255,255,255,.9),transparent)}
+.bt-knob-wrap{position:absolute;left:0;top:50%;display:flex;align-items:center;transform:translate(-50%,-50%)}
+.bt-grip{position:relative;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.8);background:#fff;color:#0f172a;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s ease;line-height:0}
+.bt-compare.is-dragging .bt-grip{transform:scale(1.1)}
+.bt-arrows{display:flex;align-items:center;line-height:0}
+.bt-nudge-l,.bt-nudge-r{display:block;width:14px;height:14px}
+.bt-nudge-r{margin-left:-4px}
+.bt-nudge-l{animation:bt-nudge-l 1.6s ease-in-out infinite}
+.bt-nudge-r{animation:bt-nudge-r 1.6s ease-in-out infinite}
+@keyframes bt-nudge-l{0%,100%{transform:translateX(0);opacity:.55}50%{transform:translateX(-2px);opacity:1}}
+@keyframes bt-nudge-r{0%,100%{transform:translateX(0);opacity:.55}50%{transform:translateX(2px);opacity:1}}
+.bt-compare.is-dragging .bt-nudge-l,.bt-compare.is-dragging .bt-nudge-r{animation-play-state:paused;opacity:1}
+.bt-fade{animation:bt-fade .45s ease-out both}
+@keyframes bt-fade{from{opacity:0}to{opacity:1}}
+
+/* ---- Thumbnail strip: a single horizontal row below the stage.
+   flex:1 1 auto lets it grow to soak up any leftover height that
+   .bt-inner ends up with (see note above); min-height keeps a sensible
+   fallback size when the column just hugs its natural content height
+   (typical case on mobile). ---- */
+.bt-thumbs{display:flex;flex-direction:row;gap:8px;flex:1 1 auto;min-height:52px}
+.bt-thumb{position:relative;display:block;flex:1 1 0;min-width:0;min-height:52px;padding:2px;border:0;border-radius:8px;background:rgba(255,255,255,.1);cursor:pointer;transition:background .3s,box-shadow .3s}
+.bt-thumb:hover{background:rgba(255,255,255,.25)}
+.bt-thumb.is-active{background:linear-gradient(135deg,#34d399,#2962ff 50%,#d600f8);box-shadow:0 0 16px rgba(41,98,255,.45)}
+.bt-thumb-inner{position:relative;display:block;width:100%;height:100%;overflow:hidden;border-radius:7px;background:#0a1228}
+.bt-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.bt-thumb:hover img{transform:scale(1.1)}
+.bt-thumb-dim{position:absolute;inset:0;background:rgba(2,9,32,.3);transition:background .3s;pointer-events:none}
+.bt-thumb.is-active .bt-thumb-dim{display:none}
+
+@media (min-width:769px){
+  /* Desktop: .content-section dùng flex-row, .image-zone bị kéo giãn cao
+     theo .text-zone. Bật height:100% để widget lấp đầy, thumbnail tự giãn. */
+  .bt-widget{height:100%}
+  .bt-frame{height:100%}
+  .bt-inner{height:100%}
+  .bt-grip{width:40px;height:40px}
+  .bt-nudge-l,.bt-nudge-r{width:16px;height:16px}
+  .bt-thumbs{min-height:64px}
+  .bt-thumb{min-height:64px}
+}
+@media (prefers-reduced-motion:reduce){
+  .bt-nudge-l,.bt-nudge-r,.bt-fade{animation:none!important}
+}
+</style>
+<style>
+/* Ghi đè an toàn: chỉ áp dụng cho .image-zone đang chứa widget này
+   (nhờ :has, không đụng tới carousel/.image-track cũ ở các section khác).
+   - Mobile (≤768px): bỏ height cố định 410px + mask mờ biên + overflow
+     để .image-zone tự co giãn theo toàn bộ nội dung widget (ảnh + thumbnail).
+   - Desktop (>768px): giữ height:auto nhưng cho phép flex kéo giãn bình thường.
+   Nếu trình duyệt chưa hỗ trợ :has(), quy tắc không áp dụng — xem hướng dẫn
+   fallback bên dưới để xử lý thủ công nếu cần. */
+.image-zone:has(> .bt-widget){
+  height:auto !important;
+  min-height:0 !important;
+  overflow:visible !important;
+  -webkit-mask-image:none !important;
+  mask-image:none !important;
+}
+</style>
+<div class="bt-widget" data-bt-widget>
+  <div class="bt-frame">
+    <div class="bt-inner">
+      <div class="bt-stage">
+        <div class="bt-compare bt-fade" role="slider" tabindex="0" aria-label="So sánh trước và sau khi sử dụng chỉ báo BigTrade" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+          <div class="bt-layer bt-after">
+            <img src="https://picsum.photos/seed/bigtrade-1/900/600" alt="Nhận diện xu hướng sớm — sau khi dùng chỉ báo" draggable="false" decoding="async">
+            <div class="bt-after-veil"></div>
+          </div>
+          <div class="bt-layer bt-before">
+            <img src="https://picsum.photos/seed/bigtrade-1/900/600" alt="Nhận diện xu hướng sớm — trước khi dùng chỉ báo" draggable="false" decoding="async">
+            <div class="bt-before-veil"></div>
+          </div>
+          <div class="bt-handle">
+            <div class="bt-line"></div>
+            <div class="bt-knob-wrap">
+              <div class="bt-grip">
+                <div class="bt-arrows">
+                  <svg class="bt-nudge-l" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                  <svg class="bt-nudge-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bt-thumbs" role="tablist" aria-label="Chọn cặp ảnh">
+        <button type="button" class="bt-thumb is-active" data-before="https://picsum.photos/seed/bigtrade-1/900/600" data-after="https://picsum.photos/seed/bigtrade-1/900/600" data-label="Nhận diện xu hướng sớm" title="Nhận diện xu hướng sớm" aria-label="Nhận diện xu hướng sớm" aria-current="true">
+          <span class="bt-thumb-inner">
+            <img src="https://picsum.photos/seed/bigtrade-1/900/600" alt="" loading="lazy" draggable="false">
+            <span class="bt-thumb-dim"></span>
+          </span>
+        </button>
+        <button type="button" class="bt-thumb" data-before="https://picsum.photos/seed/bigtrade-2/900/600" data-after="https://picsum.photos/seed/bigtrade-2/900/600" data-label="Tín hiệu đảo chiều" title="Tín hiệu đảo chiều" aria-label="Tín hiệu đảo chiều" aria-current="false">
+          <span class="bt-thumb-inner">
+            <img src="https://picsum.photos/seed/bigtrade-2/900/600" alt="" loading="lazy" draggable="false">
+            <span class="bt-thumb-dim"></span>
+          </span>
+        </button>
+        <button type="button" class="bt-thumb" data-before="https://picsum.photos/seed/bigtrade-3/900/600" data-after="https://picsum.photos/seed/bigtrade-3/900/600" data-label="Đa khung thời gian" title="Đa khung thời gian" aria-label="Đa khung thời gian" aria-current="false">
+          <span class="bt-thumb-inner">
+            <img src="https://picsum.photos/seed/bigtrade-3/900/600" alt="" loading="lazy" draggable="false">
+            <span class="bt-thumb-dim"></span>
+          </span>
+        </button>
+        <button type="button" class="bt-thumb" data-before="https://picsum.photos/seed/bigtrade-4/900/600" data-after="https://picsum.photos/seed/bigtrade-4/900/600" data-label="Vùng hỗ trợ &amp; kháng cự" title="Vùng hỗ trợ &amp; kháng cự" aria-label="Vùng hỗ trợ &amp; kháng cự" aria-current="false">
+          <span class="bt-thumb-inner">
+            <img src="https://picsum.photos/seed/bigtrade-4/900/600" alt="" loading="lazy" draggable="false">
+            <span class="bt-thumb-dim"></span>
+          </span>
+        </button>
+        <button type="button" class="bt-thumb" data-before="https://picsum.photos/seed/bigtrade-5/900/600" data-after="https://picsum.photos/seed/bigtrade-5/900/600" data-label="Điểm vào lệnh tối ưu" title="Điểm vào lệnh tối ưu" aria-label="Điểm vào lệnh tối ưu" aria-current="false">
+          <span class="bt-thumb-inner">
+            <img src="https://picsum.photos/seed/bigtrade-5/900/600" alt="" loading="lazy" draggable="false">
+            <span class="bt-thumb-dim"></span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var root=document.currentScript&&document.currentScript.previousElementSibling;
+  if(!root||!root.classList.contains("bt-widget")){
+    root=document.querySelector(".bt-widget");
+  }
+  if(!root) return;
+
+  var compare=root.querySelector(".bt-compare");
+  var beforeImg=root.querySelector(".bt-before img");
+  var afterImg=root.querySelector(".bt-after img");
+  var thumbs=[].slice.call(root.querySelectorAll(".bt-thumb"));
+  if(!compare||!beforeImg||!afterImg) return;
+
+  var pos=50,pending=null,raf=null,rect=null,dragging=false;
+
+  function write(p){
+    pos=p;
+    compare.style.setProperty("--p",p+"%");
+    compare.setAttribute("aria-valuenow",String(Math.round(p)));
+  }
+  function flush(){
+    raf=null;
+    var x=pending; pending=null;
+    if(x==null||!rect||!rect.width) return;
+    var p=((x-rect.left)/rect.width)*100;
+    write(p<0?0:p>100?100:p);
+  }
+  function schedule(x){
+    pending=x;
+    if(raf==null) raf=requestAnimationFrame(flush);
+  }
+  function start(e){
+    var r=compare.getBoundingClientRect();
+    rect={left:r.left,width:r.width};
+    dragging=true;
+    compare.classList.add("is-dragging");
+    try{compare.setPointerCapture(e.pointerId)}catch(_){}
+    if(e.pointerType==="mouse"){
+      e.preventDefault();
+      try{compare.focus({preventScroll:true})}catch(_){}
+    }
+    schedule(e.clientX);
+  }
+  function move(e){ if(dragging) schedule(e.clientX); }
+  function end(e){
+    if(!dragging) return;
+    dragging=false;
+    compare.classList.remove("is-dragging");
+    try{if(compare.hasPointerCapture(e.pointerId)) compare.releasePointerCapture(e.pointerId)}catch(_){}
+    rect=null;
+  }
+  function onKey(e){
+    if(e.key==="ArrowLeft"){e.preventDefault();write(Math.max(0,pos-4))}
+    else if(e.key==="ArrowRight"){e.preventDefault();write(Math.min(100,pos+4))}
+  }
+
+  compare.addEventListener("pointerdown",start);
+  compare.addEventListener("pointermove",move);
+  compare.addEventListener("pointerup",end);
+  compare.addEventListener("pointercancel",end);
+  compare.addEventListener("lostpointercapture",end);
+  compare.addEventListener("keydown",onKey);
+
+  function activate(btn){
+    var i=thumbs.indexOf(btn);
+    if(i<0) return;
+    thumbs.forEach(function(t){t.classList.toggle("is-active",t===btn);t.setAttribute("aria-current",t===btn?"true":"false")});
+    beforeImg.src=btn.getAttribute("data-before")||"";
+    afterImg.src=btn.getAttribute("data-after")||"";
+    beforeImg.alt=(btn.getAttribute("data-label")||"")+" — trước khi dùng chỉ báo";
+    afterImg.alt=(btn.getAttribute("data-label")||"")+" — sau khi dùng chỉ báo";
+    write(50);
+    compare.classList.remove("bt-fade");
+    void compare.offsetWidth;
+    compare.classList.add("bt-fade");
+  }
+  thumbs.forEach(function(t){t.addEventListener("click",function(){activate(t)})});
+})();
+</script>
+
+                </div>
+            </div>
+            <div class="text-zone relative pb-16 md:pb-6">
+                <div class="relative z-10 text-pretty">
+                <h2><span class="bg-gradient-to-r from-[#f0fdff] to-[#0070ff] bg-clip-text text-transparent">Chỉ báo BigTrade</span></h2>
+                <p class="leading-normal">Nắm bắt xu hướng, đi cùng xu hướng. Công cụ mạnh mẽ với bảng tín hiệu đa khung thời gian. Bạn không còn bỏ lỡ cơ hội hay chọn sai thời điểm nữa.</p>
+                
+                    <div class="w-button-wrapper">
+        
+                        <div class="w-button-glow-container">
+                            <div class="w-glow-active"></div>
+                            <div class="w-glow-dim"></div>
+                        </div>
+
+                        <a href="https://vn.tradingview.com/script/lqlCTPHZ-XTrading-BigTrade/" target="_blank" rel="noopener" 
+                       class="w-button-main w-fit flex flex-col items-center justify-center p-[2px] rounded-full bg-gradient-to-br from-[#34d399] via-[#2962ff] to-[#d600f8] font-bold text-sm text-center group">
+                        
+                            <div class="flex items-center gap-2 py-3 px-6 rounded-full bg-[#020920]/90 text-[#f0fdff] transition-all duration-300">
+                                <svg width="20" height="20" viewBox="0 0 47 47" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                    <g transform="matrix(1,0,0,1,-5.5,-5.5)">
+                                        <g transform="matrix(1,0,0,1,-2.5,-1.5)">
+                                            <path d="M46,27L46,15.06C46,13.453 45.362,11.912 44.225,10.775C43.088,9.638 41.547,9 39.94,9C33.297,9 22.702,9 16.06,9C14.453,9 12.911,9.638 11.775,10.775C10.638,11.911 10,13.453 10,15.06C10,21.914 10,33.012 10,39.888C10,43.263 12.736,46 16.112,46C20.986,46 27,46 27,46"/>
+                                            <path d="M44,33L44,52"/>
+                                            <path d="M34,42.5L53,42.5"/>
+                                            <path d="M18,32C18.018,31.968 25,25 25,25L32,32L39,25"/>
+                                        </g>
+                                    </g>
+                                </svg>
+                                <span>Sử dụng trên biểu đồ</span>
+                            </div>                            
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+            <div class="fade-in-section text-center max-w-5xl mx-auto space-y-4 mb-16">
+                <h2 class="text-3xl sm:text-5xl  font-bold leading-[1.3] pt-4">
+                <span class="textGradient-ttl text-[#f0fdff] bg-clip-text block py-2 leading-[1.6]">
+                Chiến lược thị trường <br class="md:hidden">rõ ràng và nhất quán</span>
+                </h2>
+                <p class="text-[#f0fdff] text-xl sm:text-[26px] opacity-80">Loại bỏ mọi cảm xúc trong giao dịch, quan sát dòng tiền trên toàn cảnh thị trường</p>
+            </div>
+
+        <section class="fade-in-section content-section relative">
+            <div class="image-zone">
+                <div class="image-track">
+                    <div class="image-item"><img src="https://picsum.photos/900/600?random=16" alt="Ảnh 16"></div>
+                    <div class="image-item"><img src="https://picsum.photos/900/600?random=17" alt="Ảnh 17"></div>
+                    <div class="image-item"><img src="https://picsum.photos/900/600?random=18" alt="Ảnh 18"></div>
+                    <div class="image-item"><img src="https://picsum.photos/900/600?random=19" alt="Ảnh 19"></div>
+                    <div class="image-item"><img src="https://picsum.photos/900/600?random=20" alt="Ảnh 20"></div>
+                </div>
+            </div>
+                
+                <div class="text-zone relative pb-16 md:pb-6">
+                    <div class="relative z-10 text-pretty">
+                        <h2><span class="bg-gradient-to-r from-[#f0fdff] to-[#d600f8] bg-clip-text text-transparent">Chỉ báo SignalEye</span></h2>
+                        <p>Cung cấp công cụ quan sát tổng thể biến động trên thị trường nhanh chóng và linh hoạt. Giao dịch không còn là dự đoán. Theo chân dòng tiền lớn, gặt hái sự thành công. </p>
+                        
+                        <!-- 100% CẤU TRÚC HTML NÚT NGUYÊN BẢN CỦA BẠN -->
+                        <div class="w-button-wrapper rotating-border-wrapper">
+                            <div class="w-button-glow-container">
+                                <div class="w-glow-active"></div>
+                                <div class="w-glow-dim"></div>
+                            </div>
+
+                            <a href="https://vn.tradingview.com/script/fBV4cYvS-XTrading-SignalEye/" target="_blank" rel="noopener" 
+                               class="w-button-main w-fit flex flex-col items-center justify-center p-[2px] rounded-full bg-gradient-to-br from-[#34d399] via-[#2962ff] to-[#d600f8] font-bold text-sm text-center group">
+                                <div class="flex items-center gap-2 py-3 px-6 rounded-full bg-[#020920]/90 text-[#f0fdff] transition-all duration-300">
+                                    <svg width="20" height="20" viewBox="0 0 47 47" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                        <g transform="matrix(1,0,0,1,-5.5,-5.5)">
+                                            <g transform="matrix(1,0,0,1,-2.5,-1.5)">
+                                                <path d="M46,27L46,15.06C46,13.453 45.362,11.912 44.225,10.775C43.088,9.638 41.547,9 39.94,9C33.297,9 22.702,9 16.06,9C14.453,9 12.911,9.638 11.775,10.775C10.638,11.911 10,13.453 10,15.06C10,21.914 10,33.012 10,39.888C10,43.263 12.736,46 16.112,46C20.986,46 27,46 27,46"/>
+                                                <path d="M44,33L44,52"/>
+                                                <path d="M34,42.5L53,42.5"/>
+                                                <path d="M18,32C18.018,31.968 25,25 25,25L32,32L39,25"/>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                    <span>Sử dụng trên biểu đồ</span>
+                                </div>                            
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+
+    <!-- 
+      ========================================================================
+      KHUNG SECTION CHÍNH (BẠN CÓ THỂ ĐIỀU CHỈNH KÍCH THƯỚC VÀ ĐỘ MỜ NỀN TẠI ĐÂY)
+      ========================================================================
+      - 'max-w-5xl': Chiều rộng tối đa của khung (Có thể đổi thành max-w-4xl, max-w-6xl, max-w-7xl...)
+      - 'bg-slate-900/60': Màu nền tối với độ mờ 60% (Có thể chỉnh thành /40, /50, /80...)
+      - 'backdrop-blur-md': Hiệu ứng làm mờ kính phía sau nền (Có thể chỉnh thành blur-sm, blur-lg, blur-xl...)
+      - 'p-6 md:p-12': Khoảng đệm khoảng cách lề trong của khung
+      - 'rounded-3xl': Bo tròn góc khung cực kỳ hiện đại
+      - 'border-slate-800/80': Đường viền mỏng tinh tế xung quanh khung
+    -->
+
+<!-- SECTION PRICING CARDS -->
+<section id="pricing" class="scroll-mt-[50px] relative max-w-7xl mx-auto px-6 lg:px-8 py-2 z-10 overflow-hidden">
+            <div class="fade-in-section text-center space-y-4 mb-8">
+                <h2 class="text-3xl sm:text-5xl  font-bold text-white">
+                <span class="textGradient-ttl text-[#f0fdff] bg-clip-text block py-2 leading-[1.6]">
+                Lựa chọn kế hoạch  <br class="md:hidden">phù hợp với bạn</span>
+                </h2>
+            </div>
+
+            <div class="fade-in-section flex flex-col items-center justify-center gap-y-4 pt-4 px-4 max-w-lg mx-auto relative z-20">
+                <div class="px-5 py-2 border border-white/10 bg-slate-950/40 rounded-xl text-slate-200 text-xs sm:text-sm font-semibold tracking-normal shadow-md">
+                    Thanh toán theo năm, tiết kiệm thêm đến hơn <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400  font-bold animate-pulse">40% chi phí!</span>
+                </div>
+                
+                <div class="inline-flex p-1 bg-slate-950/80 border border-white/10 rounded-full w-full max-w-[280px] shadow-2xl">
+                    <button id="toggle-monthly" type="button" aria-pressed="true" class="flex-1 py-1 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer text-white bg-white/10 border border-white/10 shadow-md">
+                        Thị trường<br>Việt Nam
+                    </button>
+                    <button id="toggle-yearly" type="button" aria-pressed="false" class="flex-1 py-1 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer text-slate-400 hover:text-white border border-transparent">
+                        Thị trường<br>Quốc Tế
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 🔦 Ánh sáng cực quang ngọc lục bảo lớn, rực rỡ và tỏa rộng ngay sau hệ thống Bảng Giá -->
+            <div class="ambient-glow-orb glow-emerald w-[750px] h-[650px] top-10 left-1/2 -translate-x-1/2"></div>
+
+            <!-- CHÚ Ý py-12 lg:py-12: Bổ dung padding dọc trực tiếp vào khung cuộn để tránh viền phát quang bị cắt ngang khi tràn viền -->
+            <div class="fade-in-section flex overflow-x-auto lg:grid lg:grid-cols-3 gap-6 lg:gap-8 items-stretch relative -mx-6 px-6 lg:mx-0 lg:px-0 snap-x snap-mandatory scroll-smooth py-12 lg:py-12 no-scrollbar relative z-10">
+                
+<!-- Plan 1: M30 -->
+                <div class="pricing-card flex-shrink-0 w-[80vw] sm:w-[360px] lg:w-auto snap-center snap-always border-2 border-emerald-500 rounded-3xl py-8 px-6 sm:p-8 bg-slate-950/40 hover:border-emerald-400 md:hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(20,184,166,0.35)] transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+
+                    <div class="absolute top-0 left-0 w-40 h-40 bg-[radial-gradient(circle_at_top_left,_rgba(117,249,236,0.8)_0%,_rgba(20,184,166,0.25)_45%,_transparent_75%)] rounded-tl-[22px] pointer-events-none z-0"></div>
+                    <svg class="absolute top-1 left-2 w-[110px] h-[110px] text-white" viewBox="0 0 876.3 693.44" fill="currentColor">
+                                <path class="cls-1" d="M207.09,4.22l-20.55,55.53c-17.61,47.6-55.14,85.12-102.74,102.74l-55.53,20.55c-6.76,2.5-4.96,12.52,2.24,12.52h182.62c3.57,0,6.46-2.89,6.46-6.46V6.47c0-7.21-10.02-9-12.52-2.24Z"/>
+                                <path class="cls-1" d="M28.28,219.94l55.53,20.55c47.6,17.61,85.12,55.14,102.74,102.74l20.55,55.53c2.5,6.76,12.52,4.96,12.52-2.24v-182.62c0-3.57-2.89-6.46-6.46-6.46H30.52c-7.21,0-9,10.02-2.24,12.52Z"/>
+                                <path class="cls-1" d="M242.42,4.22l20.55,55.53c17.61,47.6,55.14,85.12,102.74,102.74l55.53,20.55c6.76,2.5,4.96,12.52-2.24,12.52h-182.62c-3.57,0-6.46-2.89-6.46-6.46V6.47c0-7.21,10.02-9,12.52-2.24Z"/>
+                                <path class="cls-1" d="M421.23,219.94l-55.53,20.55c-47.6,17.61-85.12,55.14-102.74,102.74l-20.55,55.53c-2.5,6.76-12.52,4.96-12.52-2.24v-182.62c0-3.57,2.89-6.46,6.46-6.46h182.63c7.21,0,9,10.02,2.24,12.52Z"/>
+                              
+                                <path class="cls-1" d="M401.46,290.17l-5.21,14.07c-4.46,12.06-13.98,21.58-26.04,26.04l-14.07,5.21c-1.71.63-1.26,3.17.57,3.17h46.29c.9,0,1.64-.73,1.64-1.64v-46.29c0-1.83-2.54-2.28-3.17-.57Z"/>
+                                <path class="cls-1" d="M356.13,344.85l14.07,5.21c12.06,4.46,21.58,13.98,26.04,26.04l5.21,14.07c.63,1.71,3.17,1.26,3.17-.57v-46.29c0-.9-.73-1.64-1.64-1.64h-46.29c-1.83,0-2.28,2.54-.57,3.17Z"/>
+                                <path class="cls-1" d="M410.41,290.17l5.21,14.07c4.46,12.06,13.98,21.58,26.04,26.04l14.07,5.21c1.71.63,1.26,3.17-.57,3.17h-46.29c-.9,0-1.64-.73-1.64-1.64v-46.29c0-1.83,2.54-2.28,3.17-.57Z"/>
+                                <path class="cls-1" d="M455.74,344.85l-14.07,5.21c-12.06,4.46-21.58,13.98-26.04,26.04l-5.21,14.07c-.63,1.71-3.17,1.26-3.17-.57v-46.29c0-.9.73-1.64,1.64-1.64h46.29c1.83,0,2.28,2.54.57,3.17Z"/>
+                              
+                                <path class="cls-1" d="M63.46,362.19l-7.12,19.25c-6.11,16.5-19.12,29.51-35.62,35.62l-19.25,7.12c-2.34.87-1.72,4.34.78,4.34h63.31c1.24,0,2.24-1,2.24-2.24v-63.31c0-2.5-3.47-3.12-4.34-.78Z"/>
+                                <path class="cls-1" d="M1.46,436.98l19.25,7.12c16.5,6.11,29.51,19.12,35.62,35.62l7.12,19.25c.87,2.34,4.34,1.72,4.34-.78v-63.31c0-1.24-1-2.24-2.24-2.24H2.24c-2.5,0-3.12,3.47-.78,4.34Z"/>
+                                <path class="cls-1" d="M75.7,362.19l7.12,19.25c6.11,16.5,19.12,29.51,35.62,35.62l19.25,7.12c2.34.87,1.72,4.34-.78,4.34h-63.31c-1.24,0-2.24-1-2.24-2.24v-63.31c0-2.5,3.47-3.12,4.34-.78Z"/>
+                                <path class="cls-1" d="M137.69,436.98l-19.25,7.12c-16.5,6.11-29.51,19.12-35.62,35.62l-7.12,19.25c-.87,2.34-4.34,1.72-4.34-.78v-63.31c0-1.24,1-2.24,2.24-2.24h63.31c2.5,0,3.12,3.47.78,4.34Z"/>
+                            </svg>
+                    <div class="space-y-4 relative z-10">
+
+                        <div class="flex items-center justify-between">
+                            <!--span class="text-xs uppercase tracking-normal font-bold text-cyan-400">Gói Cơ Bản</span-->
+                            <span class="ml-auto bg-emerald-500/20 text-emerald-400 border border-emerald-400/40 text-[10px] px-2.5 py-1 rounded-md font-bold uppercase">KHÁM PHÁ</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-white">Premium M30</h3>
+                        <p class="text-sm text-slate-200 leading-relaxed font-medium">30 ngày sử dụng.<br>Nhanh chóng nắm bắt cơ hội trên thị trường.</p>
+                        
+                        <div class="py-4 border-t border-b border-white/5 space-y-1">
+                            <div class="text-emerald-400 text-sm font-bold" id="M30-strike">Coupon + Extraday </div>
+                            <div class="flex items-baseline gap-2">
+                                <!--span class="text-xl font-bold text-white">$</span-->
+                                <span class="text-4xl  font-bold tracking-normal text-white" id="M30-price">666,000</span>
+                                <span class="text-2xl  font-bold tracking-normal text-white" id="M30-period">VNĐ</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-3 pt-2">
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid text-emerald-400 fa-circle-check"></i>
+                                Truy cập đầy đủ thư viện chỉ báo XTrading
+                            </li>
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid text-emerald-400 fa-circle-check"></i>
+                                Bộ 3 chỉ báo Premium trên TradingView
+                            </li>
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid text-emerald-400 fa-circle-check"></i>
+                                Tín hiệu dòng tiền & Xu hướng thị trường
+                            </li>
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid text-emerald-400 fa-circle-check"></i>
+                                Công cụ phân tích kỹ thuật & Bộ lọc quét thị trường 
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pt-8">
+                        <button type="button" data-plan="M30" data-price="590,000" class="js-plan-button w-full bg-gradient-to-r from-emerald-700 to-cyan-500  border border-emerald-700 hover:emerald-700 text-white text-center py-4 rounded-xl font-bold transition duration-200 hover:scale-[1.02] cursor-pointer">
+                            Đăng ký sử dụng
+                        </button>
+                    </div>
+                </div>
+
+<!-- Plan 2: Premium -->
+                <div id="premium-card" class="pricing-card flex-shrink-0 w-[80vw] sm:w-[360px] lg:w-auto snap-center snap-always border-2 border-[#436fff] rounded-3xl py-8 px-6 sm:p-8 bg-[#02092080] flex flex-col justify-between relative shadow-[0_0_35px_rgba(6,182,212,0.25)] shadow-[0_0_45px_rgba(0,66,255,0.45)] md:hover:-translate-y-2 hover:border-blue-400 transition-all duration-300">
+                    <div class="absolute top-0 left-0 w-40 h-40 bg-[radial-gradient(circle_at_top_left,_rgba(34,99,255,1)_0%,_rgba(67,130,255,0.25)_45%,_transparent_75%)] rounded-tl-[22px] pointer-events-none z-0"></div>
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-[linear-gradient(172deg,rgba(59,171,246,0.8)_0%,rgba(59,171,246,1)_20%,rgba(103,232,249,1)_40%,rgba(255,255,255,1)_50%,rgba(103,232,249,1)_60%,rgba(59,130,246,1)_80%,rgba(25,83,255,0.8)_100%)] text-slate-950 px-5 py-1.5 rounded-full text-xs font-bold shadow-lg shadow-cyan-500/25 tracking-normal whitespace-nowrap z-30">PHỔ BIẾN NHẤT</div>
+                    <svg class="absolute top-1 left-2 w-[115px] h-[115px] text-white" viewBox="0 0 876.3 693.44" fill="currentColor">
+                                <path class="cls-1" d="M128.12,98.55l68.43,201.68c2.6,7.67-7.35,13.24-12.53,7.02L16.03,105.57c-3.96-4.76-.58-11.98,5.61-11.98h99.55c3.13,0,5.91,1.99,6.92,4.96ZM278.03,4.64l26.8,68.37c1.88,4.79-1.65,9.97-6.8,9.97h-149.3c-5.15,0-8.68-5.18-6.8-9.97L168.73,4.64c1.1-2.8,3.79-4.64,6.8-4.64h95.7c3,0,5.7,1.84,6.8,4.64ZM305.84,103.24l-75.54,222.66c-2.24,6.61-11.59,6.61-13.83,0l-75.54-222.66c-1.61-4.74,1.91-9.65,6.92-9.65h151.08c5,0,8.52,4.91,6.92,9.65ZM325.56,93.59h99.55c6.19,0,9.57,7.22,5.61,11.98l-167.98,201.68c-5.18,6.22-15.13.65-12.53-7.02l68.43-201.68c1.01-2.96,3.79-4.96,6.92-4.96ZM423.97,82.97h-98.85c-3,0-5.7-1.84-6.8-4.64l-26.8-68.37c-1.88-4.79,1.65-9.97,6.8-9.97h64.96c2.09,0,4.08.89,5.46,2.45l60.69,68.37c4.18,4.71.84,12.15-5.46,12.15ZM83.48,0h64.96c5.15,0,8.68,5.18,6.8,9.97l-26.8,68.37c-1.1,2.8-3.79,4.64-6.8,4.64H22.79c-6.3,0-9.64-7.44-5.46-12.15L78.02,2.45c1.39-1.56,3.37-2.45,5.46-2.45Z"/>
+                                <path class="cls-1" d="M385,259.18l14.95,44.05c.57,1.67-1.6,2.89-2.74,1.53l-36.69-44.05c-.87-1.04-.13-2.62,1.23-2.62h21.74c.68,0,1.29.44,1.51,1.08ZM417.75,238.67l5.85,14.93c.41,1.05-.36,2.18-1.49,2.18h-32.61c-1.12,0-1.9-1.13-1.49-2.18l5.85-14.93c.24-.61.83-1.01,1.49-1.01h20.9c.66,0,1.25.4,1.49,1.01ZM423.82,260.21l-16.5,48.63c-.49,1.44-2.53,1.44-3.02,0l-16.5-48.63c-.35-1.03.42-2.11,1.51-2.11h33c1.09,0,1.86,1.07,1.51,2.11ZM428.13,258.1h21.74c1.35,0,2.09,1.58,1.23,2.62l-36.69,44.05c-1.13,1.36-3.3.14-2.74-1.53l14.95-44.05c.22-.65.83-1.08,1.51-1.08ZM449.62,255.78h-21.59c-.66,0-1.25-.4-1.49-1.01l-5.85-14.93c-.41-1.05.36-2.18,1.49-2.18h14.19c.46,0,.89.2,1.19.54l13.26,14.93c.91,1.03.18,2.65-1.19,2.65ZM375.25,237.66h14.19c1.12,0,1.9,1.13,1.49,2.18l-5.85,14.93c-.24.61-.83,1.01-1.49,1.01h-21.59c-1.38,0-2.11-1.63-1.19-2.65l13.26-14.93c.3-.34.74-.54,1.19-.54Z"/>
+                                <path class="cls-1" d="M38.49,364.19l23.14,68.22c.88,2.59-2.49,4.48-4.24,2.37L.58,366.56c-1.34-1.61-.2-4.05,1.9-4.05h33.67c1.06,0,2,.67,2.34,1.68ZM89.19,332.42l9.06,23.12c.64,1.62-.56,3.37-2.3,3.37h-50.5c-1.74,0-2.94-1.75-2.3-3.37l9.06-23.12c.37-.95,1.28-1.57,2.3-1.57h32.37c1.02,0,1.93.62,2.3,1.57ZM98.6,365.77l-25.55,75.31c-.76,2.24-3.92,2.24-4.68,0l-25.55-75.31c-.54-1.6.65-3.26,2.34-3.26h51.1c1.69,0,2.88,1.66,2.34,3.26ZM105.27,362.51h33.67c2.09,0,3.24,2.44,1.9,4.05l-56.82,68.22c-1.75,2.1-5.12.22-4.24-2.37l23.14-68.22c.34-1,1.28-1.68,2.34-1.68ZM138.56,358.92h-33.43c-1.02,0-1.93-.62-2.3-1.57l-9.06-23.12c-.64-1.62.56-3.37,2.3-3.37h21.97c.71,0,1.38.3,1.85.83l20.53,23.12c1.41,1.59.28,4.11-1.85,4.11ZM23.39,330.85h21.97c1.74,0,2.94,1.75,2.3,3.37l-9.06,23.12c-.37.95-1.28,1.57-2.3,1.57H2.86c-2.13,0-3.26-2.52-1.85-4.11l20.53-23.12c.47-.53,1.14-.83,1.85-.83Z"/>
+                            </svg>
+                    <div class="space-y-4 relative z-10">
+                        <div class="flex items-center justify-between">
+                            <!--span class="text-xs uppercase tracking-normal font-bold text-blue-500">Gói Chuyên Nghiệp</span-->
+                            <span class="ml-auto bg-blue-500/20 text-[#4bd8f9] border border-blue-300/40 text-[10px] px-2.5 py-1 rounded-md font-bold uppercase">CHINH PHỤC</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-white mt-1">Premium Q90</h3>
+                        <p class="text-sm text-slate-200 leading-relaxed font-medium">90 ngày sử dụng.<br> Chúng tôi mang đến lợi thế cho bạn.</p>
+                        
+                        <div class="py-4 border-t border-white/10 border-b border-white/10 space-y-1">
+                            <div class="text-[#4bd8f9] text-sm font-bold" id="premium-strike">Tiết kiệm 888,000VNĐ so với gói M30.</div>
+                            <div class="flex items-baseline gap-2">
+                                <!--span class="text-xl font-bold text-cyan-400">$</span-->
+                                <span class="text-4xl  font-bold tracking-normal text-white" id="premium-price">2,222,222</span>
+                                <span class="text-2xl  font-bold tracking-normal text-white" id="premium-period">VNĐ</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-3 pt-2">
+                            <li class="flex items-center gap-3 text-xs text-slate-200 font-semibold">
+                                <i class="fa-solid fa-circle-check text-slate-200"></i>
+                                Đầy đủ chỉ báo chuyên sâu TienCK_SignalEye
+                            </li>
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid fa-circle-check text-slate-200"></i>
+                                Cơ chế lọc nhiễu sóng Sideway vượt trội
+                            </li>
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid fa-circle-check text-slate-200"></i>
+                                Tự động vẽ vùng Cung & Cầu cứng OrderBlock
+                            </li>
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid fa-circle-check text-slate-200"></i>
+                                Quyền truy cập tín hiệu VIP 
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pt-8">
+                        <button type="button" data-plan="Q90" data-price="1,090,000" class="js-plan-button w-full bg-[linear-gradient(172deg,rgba(59,171,246,0.8)_0%,rgba(59,171,246,1)_20%,rgba(103,232,249,1)_40%,rgba(255,255,255,1)_50%,rgba(103,232,249,1)_60%,rgba(59,130,246,1)_80%,rgba(25,83,255,0.8)_100%)] hover:from-emerald-300 hover:via-cyan-200 hover:to-violet-500 text-slate-950 text-center py-4 rounded-xl font-bold shadow-xl hover:scale-[1.02] transition-all duration-200 cursor-pointer">
+                            Đăng ký sử dụng
+                        </button>
+                    </div>
+                </div>
+
+<!-- Plan 3: Ultimate bg-gradient-to-r from-emerald-400 via-cyan-300 to-violet-600 hover:from-emerald-300 -->
+                <div class="pricing-card flex-shrink-0 w-[80vw] sm:w-[360px] lg:w-auto snap-center snap-always border-2 border-violet-600 rounded-3xl py-8 px-6 sm:p-8 bg-[#02092080] hover:border-purple-400 md:hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(168,85,247,0.35)] transition-all duration-300 flex flex-col justify-between relative">
+                    <div class="absolute top-0 left-0 w-40 h-40 bg-[radial-gradient(circle_at_top_left,_rgba(230,80,255,0.8)_0%,_rgba(230,40,252,0.25)_45%,_transparent_75%)] rounded-tl-[22px] pointer-events-none z-0"></div>
+                    <svg class="absolute top-1 left-2 w-[115px] h-[115px] text-white" viewBox="0 0 876.3 693.44" fill="currentColor">
+                                <path class="cls-1" d="M83.15,297.99c1.88,5.9,7.65,9.52,13.62,8.55,10.54-1.71,21.08-3.42,31.62-5.13,2.1-.34,4.25-.3,6.34.11,31.52,6.27,63.04,12.54,94.57,18.81,2.26.45,4.59.46,6.85.02,32.89-6.32,65.78-12.63,98.67-18.95,1.8-.35,3.64-.41,5.46-.2,11.75,1.38,23.49,2.77,35.24,4.15,5.97.7,11.56-3.12,13.23-9.05l11.69-41.46c1.05-3.74-1.75-7.45-5.64-7.45H75.01c-3.97,0-6.79,3.86-5.58,7.64l13.72,42.93Z"/>
+                                <path class="cls-1" d="M439.86,115c2.51-8.91-4.86-17.48-13.78-16.01-27.47,4.53-54.95,9.06-82.42,13.6-4.29.71-8.62-.96-11.41-4.39-27-33.24-54-66.49-81.01-99.73-9.33-11.49-26.94-11.27-35.98.45-25.82,33.47-51.65,66.95-77.47,100.42-2.85,3.69-7.46,5.45-11.97,4.57-29.26-5.76-58.52-11.53-87.78-17.29-9.22-1.82-16.95,7.21-14.02,16.37,12.39,38.77,24.78,77.55,37.18,116.32,1.42,4.46,5.57,7.48,10.25,7.48h325.93c4.82,0,9.05-3.2,10.35-7.84,10.71-37.99,21.42-75.97,32.12-113.96Z"/>
+      
+                                <path class="cls-1" d="M457.2,288.44c.45,1.4,1.81,2.25,3.22,2.02,2.49-.4,4.99-.81,7.48-1.21.5-.08,1.01-.07,1.5.03,7.46,1.48,14.92,2.97,22.38,4.45.54.11,1.09.11,1.62,0,7.78-1.49,15.57-2.99,23.35-4.48.43-.08.86-.1,1.29-.05,2.78.33,5.56.66,8.34.98,1.41.17,2.74-.74,3.13-2.14l2.77-9.81c.25-.88-.42-1.76-1.33-1.76h-75.68c-.94,0-1.61.91-1.32,1.81l3.25,10.16Z"/>
+                                <path class="cls-1" d="M541.62,245.14c.59-2.11-1.15-4.14-3.26-3.79-6.5,1.07-13,2.15-19.51,3.22-1.02.17-2.04-.23-2.7-1.04-6.39-7.87-12.78-15.73-19.17-23.6-2.21-2.72-6.38-2.67-8.52.11-6.11,7.92-12.22,15.84-18.33,23.76-.67.87-1.77,1.29-2.83,1.08-6.92-1.36-13.85-2.73-20.77-4.09-2.18-.43-4.01,1.71-3.32,3.87,2.93,9.18,5.87,18.35,8.8,27.53.34,1.05,1.32,1.77,2.43,1.77h77.13c1.14,0,2.14-.76,2.45-1.86,2.53-8.99,5.07-17.98,7.6-26.97Z"/>
+     
+                                <path class="cls-1" d="M20.7,453.64c.65,2.04,2.65,3.3,4.72,2.96,3.65-.59,7.3-1.18,10.96-1.78.73-.12,1.47-.11,2.2.04,10.92,2.17,21.85,4.35,32.77,6.52.78.16,1.59.16,2.37,0,11.4-2.19,22.79-4.38,34.19-6.56.62-.12,1.26-.14,1.89-.07,4.07.48,8.14.96,12.21,1.44,2.07.24,4.01-1.08,4.59-3.14l4.05-14.36c.37-1.29-.61-2.58-1.95-2.58H17.88c-1.37,0-2.35,1.34-1.93,2.65l4.75,14.88Z"/>
+                                <path class="cls-1" d="M144.31,390.24c.87-3.09-1.68-6.06-4.78-5.55-9.52,1.57-19.04,3.14-28.56,4.71-1.49.25-2.99-.33-3.95-1.52-9.36-11.52-18.71-23.04-28.07-34.56-3.23-3.98-9.34-3.9-12.47.16-8.95,11.6-17.9,23.2-26.84,34.8-.99,1.28-2.59,1.89-4.15,1.58-10.14-2-20.28-3.99-30.42-5.99-3.19-.63-5.87,2.5-4.86,5.67,4.29,13.44,8.59,26.87,12.88,40.31.49,1.54,1.93,2.59,3.55,2.59h112.94c1.67,0,3.14-1.11,3.59-2.72,3.71-13.16,7.42-26.32,11.13-39.49Z"/>
+                            </svg>
+                    <div class="space-y-4 relative z-10">
+                        <div class="flex items-center justify-between">
+                            <!--span class="text-xs uppercase tracking-normal font-bold text-indigo-400">Gói Tối Thượng</span-->
+                            <span class="ml-auto bg-violet-500/20 text-purple-400 border border-violet-500/40 text-[10px] px-2.5 py-1 rounded-md font-bold uppercase">TẬN HƯỞNG</span>
+                            
+                        </div>
+                        <h3 class=" text-3xl font-bold text-white ">Premium Y365</h3>
+                        <p class="text-sm text-slate-200 leading-relaxed font-medium">365 ngày sử dụng.<br>Vững vàng trên con đường tự do tài chính.</p>
+                        
+                        <div class="py-4 border-t border-b border-white/5 space-y-1">
+                            <div class="text-purple-400 text-sm font-bold" id="ultimate-strike">Tiết kiệm 3,333,333VNĐ so với gói M30.</div>
+                            <div class="flex items-baseline gap-2">
+                                <!--span class="text-xl font-bold text-cyan-400">$</span-->
+                                <span class="text-4xl  font-bold tracking-normal text-white" id="ultimate-price">3,333,333</span>
+                                <span class="text-2xl  font-bold tracking-normal text-white" id="ultimate-price" id="ultimate-period"> VNĐ</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-3 pt-2">
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid fa-circle-check text-violet-400"></i>
+                                Đầy đủ quyền lợi của gói Premium
+                            </li>
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid fa-circle-check text-violet-400"></i>
+                                Quyền xuất tín hiệu Webhook để auto-trade
+                            </li>
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid fa-circle-check text-violet-400"></i>
+                                Chiến lược backtest AI định kỳ hàng tuần
+                            </li>
+                            <li class="flex items-center gap-3 text-xs text-slate-200">
+                                <i class="fa-solid fa-circle-check text-violet-400"></i>
+                                Hỗ trợ cấu hình Bot VIP 1-1 trực tiếp
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pt-8">
+                        <button type="button" data-plan="Y365" data-price="3,990,000" class="js-plan-button w-full bg-gradient-to-r from-indigo-600 to-purple-600  border border-indigo-600 hover:border-indigo-600/30 text-white text-center py-4 rounded-xl font-bold transition duration-200 hover:scale-[1.02] cursor-pointer">
+                            Đăng ký sử dụng
+                        </button>
+                    </div>
+                </div>
+            </div>
+</section>
+<!-- MAIN CARD 30day -->
+<section id="commit" class=" scroll-mt-[50px] relative max-w-7xl mx-auto px-6 lg:px-8 py-2 z-10 overflow-hidden">
+
+            <!-- Chỉ bảo kéo ngang trực quan cho mobile -->
+            <!--div class="flex lg:hidden justify-center items-center gap-1.5 mt-2 text-slate-500 text-xs">
+                <i class="fa-solid fa-angles-left animate-pulse"></i>
+                <span>Vuốt ngang để xem các gói</span>
+                <i class="fa-solid fa-angles-right animate-pulse"></i>
+            </div-->
+        
+            <div  class="fade-in-section text-center space-y-4 mb-8">
+                <h2 class="text-3xl sm:text-5xl  font-bold text-white">
+                <span class="textGradient-ttl text-[#f0fdff] bg-clip-text block py-2 leading-[1.6]">
+                Trên bước đường cùng chúng tôi, <br>Bạn luôn được bảo vệ </span>
+            </h2>
+            </div>
+        
+
+    <div class="fade-in-section w-full max-w-7xl mx-auto">
+        
+        <!-- MAIN CARD CONTAINER -->
+        <div class=" border-none rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+            
+            <!-- Ambient Glow Background Decoration -->
+            <!--div class="absolute -top-24 -left-24     w-60 h-60 bg-slate-200 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-60 h-60 bg-slate-200 rounded-full blur-3xl pointer-events-none"></div-->
+
+            <!-- GRID CONTAINER: 12 Columns total (4 cols left = 1/3, 8 cols right = 2/3) -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-center relative z-10">
+                
+                <!-- LEFT COLUMN (1/3 width on MD screens = col-span-4) -->
+                <div class="md:col-span-4 flex flex-col items-center justify-center text-center p-4 h-full">
+                    
+                    <!-- Image Wrapper -->
+                    <div class="relative group w-full flex justify-center mb-4">
+                        <div class="absolute inset-0 rounded-2xl blur-lg"></div>
+                        <img 
+                            src="img/30day2.webp" 
+                            alt="Cam kết 30 ngày hoàn tiền" 
+                            class="relative w-36 sm:w-44 md:w-full max-w-[200px] h-auto object-contain transition-transform duration-300  filter drop-shadow-xl"
+                            onerror="this.onerror=null; this.src='https://placehold.co/300x300/022c22/10b981?text=30+Days+Guarantee';"
+                        />
+                    </div>
+
+                    <!-- Caption Text under Image -->
+                    <div class="space-y-1">
+                        <span class="inline-flex items-center gap-1.5 text-6xl font-semibold text-[#f0fdff]">
+                            30 ngày
+                        </span>
+                        <p class="text-3xl text-[#f0fdff] font-medium">
+                            không có rủi ro
+                        </p>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN (2/3 width on MD screens = col-span-8) -->
+                    <div class="md:col-span-8 space-y-5 text-center md:text-left flex flex-col justify-center">
+                        
+                        <!-- Header Section -->
+                        <div class="space-y-3">
+                           
+                            
+                            <!--h3 class="font-bold text-white text-2xl sm:text-base tracking-tight">
+                                Trải nghiệm không rủi ro
+                            </h3-->
+                        </div>
+
+                        <!-- Main Description -->
+                        <p class="text-sm sm:text-xl text-[#f0fdff] leading-relaxed font-normal"><Strong>Chính sách hoàn tiền</Strong></p>
+                        <p class="text-sm sm:text-xl text-[#f0fdff] leading-relaxed font-normal">
+                           Trong 30 ngày đầu tiên sử dụng, nếu không đạt hiệu quả mong muốn, bạn sẽ được hoàn trả 100% chi phí đã đăng ký.
+                        </p>
+                        
+                        <!-- 3 Feature Points Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t-[1px] border-blue-400 text-left ">
+                            
+                            <!-- Feature 1 -->
+                            <div class="flex items-center gap-2.5 bg-transparent sm:bg-transparent p-0 sm:p-0 rounded-xl border-none">
+                                <div class="w-6 h-6 rounded-full bg-slate-500/20 text-white flex items-center justify-center text-xs shrink-0 border border-white">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                <span class="text-xs text-slate-200 font-semibold">Không yêu cầu lý do</span>
+                            </div>
+                            
+                            <!-- Feature 2 -->
+                            <div class="flex items-center gap-2.5 bg-transparent sm:bg-transparent p-0 sm:p-0 rounded-xl border-none">
+                                <div class="w-6 h-6 rounded-full bg-slate-500/20 text-white flex items-center justify-center text-xs shrink-0 border border-white">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                <span class="text-xs text-slate-200 font-semibold">Xử lý hoàn tiền 24/7</span>
+                            </div>
+                            
+                            <!-- Feature 3 -->
+                            <div class="flex items-center gap-2.5 bg-transparent p-0 sm:p-0 rounded-xl border-none">
+                                <div class="w-6 h-6 rounded-full bg-slate-500/20 text-wite flex items-center justify-center text-xs shrink-0 border border-white">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                <span class="text-xs text-slate-200 font-semibold">Hỗ trợ tại Việt Nam</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section id="faq" class="fade-in-section relative max-w-5xl mx-auto px-6 lg:px-8 py-16 border-t border-none overflow-hidden z-10">
+            <div class="absolute inset-0 ambient-soft-spotlight pointer-events-none"></div>
+            <!-- 🔦 Đèn cực quang tĩnh nền xanh rực sáng ở khu vực cuối trang -->
+            <div class="ambient-glow-orb glow-cyan w-[650px] h-[550px] bottom-10 left-1/2 -translate-x-1/2"></div>
+            
+            <div class="text-center space-y-4 mb-12 relative z-10">
+                <h2 class="text-3xl sm:text-5xl  font-bold text-[#f0fdff]">Câu hỏi thường gặp</h2>
+                <!--p class="text-slate-400 text-sm">Mọi thông tin bạn cần nắm rõ trước khi tham gia cộng đồng XTrading.</p-->
+            </div>
+
+            <div class="space-y-4 relative z-10">
+                <!-- Accordion item 1 -->
+                <div class="text-base sm:text-xl border border-white/5 rounded-2xl overflow-hidden">
+                    <button type="button" class="bg-[#020920b3] faq-toggle w-full flex items-center justify-between p-5 text-left font-bold text-slate-200 hover:text-white transition-colors duration-200 cursor-pointer" aria-expanded="false" aria-controls="faq-answer-1">
+                        <span>Tôi có cần kiến thức phân tích kỹ thuật chuyên sâu để sử dụng không ?</span>
+                        <i class="fa-solid fa-chevron-right text-[#f0fdff] transition-transform duration-300"></i>
+                    </button>
+                    <div id="faq-answer-1" class="text-sm sm:text-base faq-content hidden p-5 pt-0 text-sm text-slate-200 bg-[#020920]/55 leading-relaxed border-t border-white/5">
+                        Không nhất thiết. Hệ thống chỉ báo được thiết kế trực quan hóa mức tối đa để phù hợp với tất cả mọi người muốn đọc hiểu thị trường. Với kết quả phân tích trực quan, bạn sẽ nắm được sự vận động của thị trường để tập trung cho kế hoạch quản lý vốn nhằm giảm thiểu rủi ro và tối ưu lợi nhuận.
+                    </div>
+                </div>
+
+                <!-- Accordion item 2 -->
+                <div class="text-base sm:text-xl border border-white/5 rounded-2xl overflow-hidden">
+                    <button type="button" class="bg-[#020920b3] faq-toggle w-full flex items-center justify-between p-5 text-left font-bold text-slate-200 hover:text-white transition-colors duration-200 cursor-pointer" aria-expanded="false" aria-controls="faq-answer-2">
+                        <span>Toàn bộ quá trình đăng ký sử dụng diễn ra thế nào ?</span>
+                        <i class="fa-solid fa-chevron-right text-[#f0fdff] transition-transform duration-300"></i>
+                    </button>
+                    <div id="faq-answer-2" class="bg-[#020920]/55 text-sm sm:text-base faq-content hidden p-5 pt-0 text-sm text-slate-200 leading-relaxed border-t border-white/5">
+                        Quá trình đăng ký sử dụng trải qua các bước như sau:<br>• Bước 1: Thêm chỉ báo vào mục yêu thích và mở ra trên biểu đồ TradingView.<br>• Bước 2: Thanh toán đăng ký và nhận License key.<br>• Bước 3: Điền thông tin key vào phần cài đặt của chỉ báo để bắt đầu sử dụng.
+                    </div>
+                </div>
+
+                <!-- Accordion item 3 -->
+
+                <div class="text-base sm:text-xl border border-white/5 rounded-2xl overflow-hidden">
+                    <button type="button" class="bg-[#020920b3] faq-toggle w-full flex items-center justify-between p-5 text-left font-bold text-slate-200 hover:text-white transition-colors duration-200 cursor-pointer" aria-expanded="false" aria-controls="faq-answer-3">
+                        <span>Tôi liên hệ với bộ phận hỗ trợ XTrading như thế nào ?</span>
+                        <i class="fa-solid fa-chevron-right text-[#f0fdff] transition-transform duration-300"></i>
+                    </button>
+                    
+                    <div id="faq-answer-3" class="bg-[#020920]/55 faq-content hidden p-5 pt-0 text-sm sm:text-base text-slate-200 leading-relaxed border-t border-white/5">
+                        <p class="mb-4">Mọi vấn đề cần hỗ trợ, vui lòng liên hệ với chúng tôi qua:
+                        </p>
+
+<div class="text-xs sm:text-sm text-left text-slate-200 flex items-center justify-center gap-4 sm:gap-6 flex-wrap pt-1">
+            
+            <!-- Hotline -->
+            <span>Hotline: <strong class="text-white font-bold">09xx xxx xxx<br><i class="fa-regular fa-envelope"></i>  XTrading@gmail.com</strong></span>
+
+            <span class="text-white/20 hidden sm:inline">|</span>
+
+            <!-- Cụm Zalo: Dùng gap-1.5 để ảnh sát chữ -->
+            <div class="inline-flex items-center gap-1.5">
+                <span>Zalo:</span>
+                <img src="img/zaloqr.webp" alt="Zalo QR Code" class="w-18 sm:w-20 max-w-[100px] h-auto rounded-lg border border-white/10">
+            </div>
+
+            <!-- Cụm Telegram: Dùng gap-1.5 để ảnh sát chữ -->
+            <div class="inline-flex items-center gap-1.5">
+                <span>Telegram:</span>
+                <img src="img/teleqr.webp" alt="Zalo QR Code" class="w-18 sm:w-20 max-w-[100px] h-auto rounded-lg border border-white/10">
+            </div>
+
+</div>
+
+                    </div>
+                </div>
+
+                <!-- Accordion item 4 -->
+                <div class="text-base sm:text-xl border border-white/5 rounded-2xl overflow-hidden">
+                    <button type="button" class="bg-[#020920b3] faq-toggle w-full flex items-center justify-between p-5 text-left font-bold text-slate-200 hover:text-white transition-colors duration-200 cursor-pointer" aria-expanded="false" aria-controls="faq-answer-4">
+                        <span>Bộ chỉ báo này hoạt động trên các loại tài sản và thị trường nào ?</span>
+                        <i class="fa-solid fa-chevron-right text-[#f0fdff] transition-transform duration-300"></i>
+                    </button>
+                    <div id="faq-answer-4" class="bg-[#020920]/55 text-sm sm:text-base faq-content hidden p-5 pt-0 text-sm text-slate-200 leading-relaxed border-t border-white/5">
+                        Tất cả các chỉ báo XTrading đều hoạt động trên bất kỳ loại tài sản và thị trường nào có sẵn trên TradingView: Crypto, ngoại hối, cổ phiếu, chỉ số, hợp đồng tương lai và hàng hóa.
+                    </div>
+                </div>
+
+                <!-- Accordion item 5 -->
+                <div class="text-base sm:text-xl border border-white/5 rounded-2xl overflow-hidden">
+                    <button type="button" class="bg-[#020920b3] faq-toggle w-full flex items-center justify-between p-5 text-left font-bold text-slate-200 hover:text-white transition-colors duration-200 cursor-pointer" aria-expanded="false" aria-controls="faq-answer-5">
+                        <span>Tôi có cần kỹ năng về lập trình Pine Script để cài đặt các công cụ chỉ báo không ?</span>
+                        <i class="fa-solid fa-chevron-right text-[#f0fdff] transition-transform duration-300"></i>
+                    </button>
+                    <div id="faq-answer-5" class="bg-[#020920]/55 text-sm sm:text-base faq-content hidden p-5 pt-0 text-sm text-slate-200 leading-relaxed border-t border-white/5">
+                        Tin vui là không. Các chỉ báo đều hoạt động bên trong biểu đồ TradingView mà không cần thao tác gì thêm về lập trình. Bạn chỉ cần thêm chỉ báo vào mục yêu thích và mở ra trên biểu đồ như mọi khi.
+                    </div>
+                </div>
+
+                <!-- Accordion item 6 -->
+                <div class="text-base sm:text-xl border border-white/5 rounded-2xl overflow-hidden">
+                    <button type="button" class="bg-[#020920b3] faq-toggle w-full flex items-center justify-between p-5 text-left font-bold text-slate-200 hover:text-white transition-colors duration-200 cursor-pointer" aria-expanded="false" aria-controls="faq-answer-6">
+                        <span>Mọi quyết định thị trường đều có thể thành công với XTrading không ?</span>
+                        <i class="fa-solid fa-chevron-right text-[#f0fdff] transition-transform duration-300"></i>
+                    </button>
+                    <div id="faq-answer-6" class="bg-[#020920]/55 text-sm sm:text-base faq-content hidden p-5 pt-0 text-sm text-slate-200 leading-relaxed border-t border-white/5">
+                        Mặc dù các chỉ báo hỗ trợ phân tích dòng tiền, nhưng không có công cụ hoặc hệ thống nào có thể đảm bảo cơ hội 100% chiến thắng trên thị trường. Bộ chỉ báo được thiết kế nhằm nâng cao kỹ năng giao dịch và đầu tư, không đảm bảo lợi nhuận. Thị trường luôn tiềm ẩn rủi ro thua lỗ vốn.
+                </div>
+
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="relative border-t border-white/10 py-16 px-6 lg:px-8 max-w-7xl mx-auto text-center text-slate-400 text-sm space-y-6 z-10 overflow-hidden">
+        <!-- Soft background spotlight under footer -->
+        <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-cyan-950/15 to-transparent pointer-events-none"></div>
+        
+        <div class="flex items-center justify-center gap-2 relative z-10">
+            <svg class="w-[100px] h-auto" viewBox="0 0 1384 414" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                        <g>
+                            <g>
+                                <path d="M174.364,349.43c26.604,-38.667 53.209,-77.328 79.813,-115.989c26.451,38.656 52.903,77.312 79.349,115.973c0,0 -26.388,-38.703 0,0l39.115,-60.448l135.591,-209.553l-31.765,-79.412l-146.308,226.116l-76.035,-110.596l-0.005,0l-76.046,110.596l-146.308,-226.116l-31.765,79.412c45.151,69.92 174.364,270.017 174.364,270.017" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M135.752,0.03l-88.108,0l138.779,214.186l45.289,-65.872l-95.959,-148.313Z" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M254.094,112.185l-77.111,-112.148l154.265,-0.037l-77.154,112.185Z" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M321.72,214.178l-45.257,-65.82l96.007,-148.355l88.118,0l-138.81,214.212" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M43.972,55.562c-0.744,0 -0.749,1.161 0,1.161c0.744,0 0.749,-1.161 0,-1.161" style="fill:#fff;fill-rule:nonzero;"/>
+                            </g>
+                            <g>
+                                <path d="M621.261,176.867l-48.493,0l-35.518,133.963l-1.946,0l-34.707,-133.963l-50.277,0l58.873,172.563l-1.46,5.514c-2.433,14.11 -9.569,22.381 -30.977,22.381c-4.866,0 -11.353,-0.487 -14.272,-1.135l0,32.437c4.541,0.973 14.759,1.946 24.652,1.946c45.249,0 62.116,-23.679 74.118,-55.305l4.379,-11.839c0.649,-1.946 55.629,-166.562 55.629,-166.562Z" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M626.335,349.43l45.574,0l0,-99.094c0,-25.138 13.137,-37.464 32.437,-37.464c18.165,0 31.626,9.731 31.626,36.491l0,100.067l45.574,0l0,-113.366c0,-40.708 -24.814,-61.792 -59.035,-61.792c-27.733,0 -44.276,15.083 -49.79,28.22l-1.946,0l0,-25.625l-44.438,0l0,172.563Z" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M834.301,349.43l16.543,-54.98l72.009,0l16.381,54.98l50.115,0l-72.983,-221.38l-55.629,0l-73.307,221.38l46.871,0Zm53.845,-177.266l25.625,87.741l-53.683,0l25.949,-87.741l2.108,0Z" style="fill:#fff;fill-rule:nonzero;"/>
+                                <rect x="992.963" y="116.372" width="45.736" height="233.057" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M1130.865,380.083c-18.975,0 -29.842,-8.109 -31.95,-19.462l-43.952,0c0.811,27.085 23.03,52.71 74.604,52.71c42.168,0 82.551,-16.705 82.551,-66.171l0,-170.293l-44.925,0l0,25.463l-1.946,0c-6.325,-15.083 -21.895,-27.571 -48.817,-27.571c-38.6,0 -65.036,29.031 -65.036,78.821l0,15.083c0,50.115 26.922,78.335 64.711,78.335c24.49,0 42.33,-11.839 48.655,-27.085l1.946,0l0,24.328c0,22.868 -11.677,35.843 -35.843,35.843Zm2.271,-169.319c20.597,0 33.41,18.165 33.41,45.249l0,13.948c0,25.463 -12.326,43.303 -33.248,43.303c-20.597,0 -35.194,-15.57 -35.194,-44.276l0,-12.975c0,-28.544 13.786,-45.249 35.032,-45.249Z" style="fill:#fff;fill-rule:nonzero;"/>
+                                <path d="M1303.962,173.785c-52.71,0 -80.119,35.356 -80.119,83.362l0,11.353c0,51.899 27.409,84.011 80.119,84.011c52.385,0 79.632,-32.437 79.632,-84.173l0,-11.353c0,-48.979 -27.247,-83.2 -79.632,-83.2Zm-0.162,34.869c26.436,0 33.572,24.003 33.572,48.979l0,10.866c0,24.49 -6.812,48.979 -33.572,48.979c-26.76,0 -33.896,-24.652 -33.896,-48.979l0,-10.866c0,-24.814 7.46,-48.979 33.896,-48.979Z" style="fill:#fff;fill-rule:nonzero;"/>
+                            </g>
+                        </g>
+                    </svg>
+        </div>
+        <p class="max-w-6xl mx-auto leading-relaxed relative z-10 text-justify">
+            XTrading cung cấp công cụ phân tích kỹ thuật chỉ nhằm mục đích giáo dục và thông tin chung.<br>    
+            Giao dịch và đầu tư chứng khoán, hàng hóa, tiền điện tử và các tài sản tài chính khác tiềm ẩn rủi ro đáng kể, bao gồm nguy cơ mất toàn bộ vốn đầu tư. Mọi thông tin có được từ dịch vụ của chúng tôi chỉ mang tính chất tham khảo, không cấu thành lời khuyên tài chính, đầu tư hay pháp lý. Hiệu suất đầu tư trong quá khứ không phản ánh cũng như không đảm bảo kết quả trong tương lai. Hãy luôn giao dịch có trách nhiệm.<br>
+            Các biểu đồ được tích hợp từ nền tảng TradingView. Dữ liệu thị trường được hiển thị thông qua nền tảng này. TradingView® là thương hiệu đã đăng ký của TradingView, Inc. www.TradingView.com  TradingView® không có bất kỳ mối quan hệ đối tác hay liên kết nào với dịch vụ của chúng tôi. <br>
+            
+            © 2026 XTrading.
+        </p>
+        <div class="flex justify-center gap-6 text-xs font-semibold relative z-10">
+            
+            <button onclick="openDisclaimerModal()" class="hover:text-[#f0fdff] transition cursor-pointer text-left">
+                Tuyên bố miễn trừ trách nhiệm
+            </button>
+            <span class="text-slate-400">|</span>
+            <a href="mailto:XTrading@gmail.com" class="hover:text-[#f0fdff] transition flex items-center gap-1.5"><i class="fa-regular fa-envelope"></i> Liên hệ bộ phận hỗ trợ</a>
+        </div>
+    </footer>
+
+    <!-- LỚP PHỦ NỀN ĐỒNG BỘ CHO DI ĐỘNG KHI MỞ MENU -->
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-slate-950/40 z-20 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"></div>
+
+    <!-- 📱 MOBILE MENU -->
+    <div 
+        id="mobile-menu"
+        role="navigation"
+        aria-labelledby="mobile-menu-title"
+        aria-hidden="true"
+        class="fixed top-[83px] left-0 right-0 z-30
+        nav-blur bg-slate-950/15
+        border-b border-white/5
+        shadow-2xl shadow-black/30
+        px-7 sm:px-8 py-6
+        flex flex-col gap-4
+        transition-[opacity,transform]
+        duration-300
+        ease-out
+        opacity-0
+        pointer-events-none
+        invisible
+        -translate-y-4
+        overflow-y-auto
+        max-h-[calc(100dvh-83px)]">
+        <h2 id="mobile-menu-title" class="sr-only">Menu điều hướng XTrading</h2>
+
+        <!-- MIDDLE NAVIGATION ROWS -->
+        <div class="flex flex-col space-y-3 w-full">
+            <a href="#intro" class="mobile-nav-link border border-white/5 bg-slate-900/40 px-5 py-5 rounded-full flex items-center justify-between hover:border-slate-500 hover:bg-slate-900/70 transition-all duration-200">
+                <span class="text-slate-200 text-[15px] font-bold">Bộ Chỉ Báo</span>
+                <!--i class="fa-solid fa-angle-right text-slate-500 text-xs"></i-->
+            </a>
+            <a href="#pricing" class="mobile-nav-link border border-white/5 bg-slate-900/40 px-5 py-5 rounded-full flex items-center justify-between hover:border-slate-500 hover:bg-slate-900/70 transition-all duration-200 ">
+                <span class="text-slate-200 text-[15px] font-bold flex items-center gap-1.5">Bảng giá</span>
+                <!--i class="fa-solid fa-angle-right text-slate-500 text-xs"></i-->
+            </a>
+            <a href="#commit" class="mobile-nav-link border border-white/5 bg-slate-900/40 px-5 py-5 rounded-full flex items-center justify-between hover:border-slate-500 hover:bg-slate-900/70 transition-all duration-200">
+                <span class="text-slate-200 text-[15px] font-bold">Chính sách</span>
+                <!--i class="fa-solid fa-angle-right text-slate-500 text-xs"></i-->
+            </a>
+            <a href="#faq" class="mobile-nav-link border border-white/5 bg-slate-900/40 px-5 py-5 rounded-full flex items-center justify-between hover:border-slate-500 hover:bg-slate-900/70 transition-all duration-200">
+                <span class="text-slate-200 text-[15px] font-bold">FAQ</span>
+                <!--i class="fa-solid fa-angle-right text-slate-500 text-xs"></i-->
+            </a>
+        </div>
+
+        <!-- BOTTOM ACCOUNT CTAS -->
+        <div class="flex flex-col space-y-3.5 w-full mt-6 mb-4 items-center">
+            <div class="flex items-center justify-center gap-3.5 w-full">
+                <!--a href="#about-indicators" class="mobile-nav-link flex-1 py-4 text-center border border-white/10 bg-slate-900/50 hover:bg-slate-800 text-white font-bold rounded-2xl transition text-sm">Bộ Chỉ Báo</a-->
+                <!--a href="#pricing" class="mobile-nav-link w-fit px-8 py-4 text-center bg-white hover:bg-slate-200 text-slate-950 font-bold rounded-full transition text-sm shadow-lg shadow-white/5">Nhận truy cập</a-->
+                <!--a href="#pricing" class="mobile-nav-link w-fit px-5 py-5 text-center bg-white hover:bg-slate-200 text-slate-950 font-bold rounded-full transition-all duration-200 text-[15px] active:scale-[0.98] shadow-lg shadow-white/5">Nhận truy cập</a-->
+                <a href="#pricing" class="btn-getaccess mobile-nav-link">Nhận truy cập ✧</a>
+             </div>
+            <!--p class="text-[9px] text-center text-slate-600 tracking-normal uppercase font-mono">Premium Indicators Ecosystem</p-->
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    
+        
+    <div id="payment-modal" role="dialog" aria-modal="true" aria-labelledby="payment-modal-title" aria-hidden="true" class="hidden fixed inset-0 min-h-screen h-[100dvh] w-screen z-50 flex items-center justify-center p-3 sm:p-4 bg-[#0209203e] backdrop-blur-md transition-all duration-300">
+    <div class="bg-[#02092080] border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 max-w-lg sm:max-w-[540px] w-full relative space-y-2 shadow-2xl max-h-[92vh] overflow-y-auto custom-scrollbar">
+        
+        <!-- Nút đóng Modal -->
+        <button type="button" data-close-payment aria-label="Đóng khung thanh toán" class="absolute right-3 top-3 text-slate-400 hover:text-white p-2 cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        
+        <!-- Tiêu đề -->
+        <div class="text-center space-y-1.5">
+            <h3 id="payment-modal-title" class="text-lg sm:text-2xl font-bold text-white leading-tight">Thanh toán & nhận License key</h3>
+            <p class="text-xs sm:text-sm text-slate-200">Gói đăng ký: <span id="modal-plan-name" class="text-[#34d399] font-bold">Q90</span>, chính sách hoàn tiền được áp dụng.</p>
+        </div>
+
+        <!-- TAB CHỌN NGÂN HÀNG -->
+        <div class="flex p-1 bg-slate-950/80 border border-white/10 rounded-2xl">
+            <button type="button" id="tab-acb" class="flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-[linear-gradient(180deg,rgba(59,171,246,0.8)_0%,rgba(59,171,246,1)_20%,rgba(103,232,249,1)_40%,rgba(255,255,255,1)_50%,rgba(103,232,249,1)_60%,rgba(59,130,246,1)_80%,rgba(25,83,255,0.8)_100%)] text-slate-950 shadow-md">
+                Trong nước
+            </button>
+            <button type="button" id="tab-scb" class="flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-white">
+                Ngoài nước
+            </button>
+        </div>
+
+        <!-- NỘI DUNG TAB 1: Ngân hàng ACB (Cột QR gọn, Cột chữ rộng) -->
+        <div id="content-acb" class="bg-slate-950/80 p-3 sm:p-4 rounded-2xl border border-white/5 grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-3 sm:gap-4 items-center">
+            <!-- Cột ảnh: Co lại vừa vặn kích thước 128px (w-32) -->
+            <div class="flex flex-col items-center justify-center shrink-0">
+                <div class="w-28 h-28 sm:w-36 sm:h-36 bg-slate-900 rounded-xl p-2 flex items-center justify-center border border-white/5">
+                    <img id="qr-image" src="img/qrpay.webp" alt="QR Thanh toán" class="w-full h-full object-cover rounded-lg">
+                </div>
+            </div>
+            <!-- Cột chữ: Dùng 1fr (chiếm toàn bộ không gian còn lại), thêm whitespace-nowrap để tối ưu -->
+            <div class="text-left space-y-1.5 text-xs sm:text-sm text-slate-300 border-t sm:border-t-0 sm:border-l border-white/10 pt-3 sm:pt-0 sm:pl-4">
+                <p class="whitespace-nowrap">• Ngân hàng:<strong> Á Châu (ACB)</strong></p>
+                <p class="whitespace-nowrap">• Số tài khoản:<strong> 800058</strong></p>
+                <p class="whitespace-nowrap">• Tên tài khoản:<strong> HO HUY TIEN</strong></p>
+            </div>
+        </div>
+
+        <!-- NỘI DUNG TAB 2: Standard Chartered (Mặc định ẩn) -->
+        <div id="content-scb" class="hidden bg-slate-950/80 p-4 rounded-2xl border border-white/5 grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-4 items-center">
+            <!-- Cột icon/mô tả ngắn -->
+            <div class="flex flex-col items-center justify-center shrink-0">
+                <div class="w-36 h-36 bg-slate-900 rounded-xl p-2 flex flex-col items-center justify-center text-center border border-white/5">
+                    <img id="SCB Logo" src="img/scblogo.webp" alt="QR Thanh toán" class="w-full h-full object-cover rounded-lg">
+                </div>
+            </div>
+            <!-- Cột chữ rộng rãi -->
+            <div class="text-left space-y-1.5 text-xs sm:text-sm text-slate-300 border-t sm:border-t-0 sm:border-l border-white/10 pt-3 sm:pt-0 sm:pl-4">
+                <p class="whitespace-nowrap">• Ngân hàng:<strong> Standard Chartered Viet Nam</strong></p>
+                <p class="whitespace-nowrap">• SWIFT Code:<strong> SCBLVNVX</strong></p>
+                <p class="whitespace-nowrap">• Số tài khoản:<strong> 99275613799</strong></p>
+                <p class="whitespace-nowrap">• Tên tài khoản:<strong> HO HUY TIEN</strong></p>
+            </div>
+        </div>
+
+        <!-- THÔNG TIN DÙNG CHUNG: Giá tiền & Nội dung CK -->
+        <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-white/5 space-y-1.5 text-center">
+            <div>
+                <span class="text-xs sm:text-sm text-slate-200">Số tiền thanh toán: </span>
+                <span class="text-xl font-bold text-[#f0fdff] ml-1">
+                    <span id="modal-plan-price-value">1,090,000 VNĐ</span>
+                    <span id="modal-plan-price-period" class="text-xs text-slate-500 font-normal font-sans">/tháng</span>
+                </span>
+            </div>
+            <div class="text-xs sm:text-sm text-slate-200 pt-2 border-t border-white/5">
+                Nội dung chuyển khoản: <span class="font-sans tabular-nums text-[#34d399] font-bold uppercase ml-1" id="modal-order-id">SDT_GoiDangKy_XXXXXX</span><br>
+                <div class="text-xs sm:text-sm text-slate-400 text-pretty">(SDT: Số điện thoại nhận key, tên gói và mã đăng ký. License key được gửi đến qua SMS. Nếu bạn muốn nhận key qua kênh khác, vui lòng liên hệ hỗ trợ.)</div>
+
+            </div>
+        </div>
+
+        <!-- Hỗ trợ & Nút Đóng -->
+        <div class="text-xs sm:text-sm text-center text-slate-200 flex items-center justify-center gap-4 sm:gap-6 flex-wrap pt-1">
+            
+            <!-- Hotline -->
+            <span>Hotline: <strong class="text-white font-bold">0988 886 719<br><i class="fa-regular fa-envelope"></i>  XTrading@gmail.com</strong></span>
+
+            <span class="text-white/20 hidden sm:inline">|</span>
+
+            <!-- Cụm Zalo: Dùng gap-1.5 để ảnh sát chữ -->
+            <div class="inline-flex items-center gap-1.5">
+                <span>Zalo:</span>
+                <img src="img/zaloqr.webp" alt="Zalo QR" class="w-12 h-12 sm:w-14 sm:h-14 object-contain rounded border border-white/10 shrink-0">
+            </div>
+
+            <!-- Cụm Telegram: Dùng gap-1.5 để ảnh sát chữ -->
+            <div class="inline-flex items-center gap-1.5">
+                <span>Telegram:</span>
+                <img src="img/teleqr.webp" alt="Telegram QR" class="w-12 h-12 sm:w-14 sm:h-14 object-contain rounded border border-white/10 shrink-0">
+            </div>
+
+        </div>      
+        <a href="https://vn.tradingview.com/script/lTeNB8SC-XTrading-BigMoney/" target="_blank" class="block text-center w-full bg-slate-800 hover:bg-slate-700 border border-white/5 text-white py-3.5 rounded-full font-bold transition cursor-pointer">
+    Truy cập chỉ báo
+        </a>
+        <button type="button" 
+        onclick="window.open('https://vn.tradingview.com/script/lTeNB8SC-XTrading-BigMoney', '_blank'); window.open('https://vn.tradingview.com/script/lqlCTPHZ-XTrading-BigTrade/', '_blank'); window.open('https://vn.tradingview.com/script/fBV4cYvS-XTrading-SignalEye', '_blank');" 
+        class="w-full bg-slate-800 hover:bg-slate-700 border border-white/5 text-white py-3.5 rounded-full font-bold transition cursor-pointer">
+    Truy cập chỉ báo
+</button>
+    </div>
+</div>
+
+<!--Disclaimer-->
+<div id="disclaimer-modal" 
+     role="dialog" 
+     aria-modal="true" 
+     aria-hidden="true" 
+     class="hidden fixed inset-0 min-h-screen h-[100dvh] w-screen z-50 flex items-center justify-center p-4 bg-[#020920]/80 backdrop-blur-md transition-all duration-300">
+    
+    <!-- Khung nội dung -->
+    <div class="bg-[#0b132b] border border-slate-700/60 rounded-2xl sm:rounded-3xl p-5 sm:p-6 max-w-5xl w-full relative space-y-4 shadow-2xl max-h-[85vh] flex flex-col text-slate-300 text-sm leading-relaxed">
+        
+        <!-- Tiêu đề & Nút đóng -->
+        <div class="flex items-center justify-between border-b border-slate-700/50 pb-3">
+            <h3 class="text-base sm:text-xl font-bold text-white flex items-center gap-2">
+                
+                Tuyên Bố Miễn Trừ Trách Nhiệm
+            </h3>
+            <button onclick="closeDisclaimerModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Nội dung đề xuất (Có thanh cuộn nếu văn bản dài) -->
+        <div class="overflow-y-auto custom-scrollbar pr-1 space-y-3 text-xs sm:text-sm text-slate-300">
+            <div class="space-y-6 text-slate-300 text-xs sm:text-sm leading-relaxed">
+    
+    <!-- Đoạn mở đầu nhấn mạnh -->
+    <p class="text-slate-200 text-base sm:text-xl font-medium p-3 rounded-r-xl">
+        Mọi nội dung, công cụ và dữ liệu trên website này được cung cấp duy nhất cho mục đích giáo dục và tham khảo thông tin, hoàn toàn không cấu thành lời khuyên đầu tư tài chính. Hoạt động giao dịch, đầu tư luôn đi kèm rủi ro; người dùng cần chủ động quản lý rủi ro đối với nguồn vốn của mình.
+    </p>
+
+    <!-- Điều 1 -->
+    <section class="space-y-2">
+        <h4 class="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
+             1. Tuyên Bố Miễn Trừ Rủi Ro Thị Trường
+        </h4>
+        <ul class="list-disc pl-5 space-y-1.5 text-slate-300 marker:text-cyan-500">
+            Giao dịch và đầu tư tài chính là các hoạt động có tiềm ẩn rủi ro. Biến động thị trường có thể dẫn đến việc tổn thất một phần hoặc toàn bộ vốn đầu tư.
+            Tất cả thông tin trên website này không phải và không nên hiểu là lời khuyên tài chính. Mọi quyết định mua, bán, nắm giữ hay giao dịch chứng khoán, crypto, hàng hóa... đều chứa đựng rủi ro. Người dùng nên tham khảo ý kiến từ các chuyên gia tài chính có chứng chỉ chuyên môn trước khi thực hiện.
+            Hiệu suất giao dịch trong quá khứ không phải là yếu tố đảm bảo cho kết quả trong tương lai. Bạn nên cân nhắc kỹ lưỡng liệu các hoạt động giao dịch có phù hợp với năng lực tài chính và mức độ chấp nhận rủi ro cá nhân hay không.
+        </ul>
+    </section>
+
+    <!-- Điều 2 -->
+    <section class="space-y-2">
+        <h4 class="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
+         2. Hiệu Suất Giả Định & Mô Phỏng
+        </h4>
+        <ul class="list-disc pl-5 space-y-1.5 text-slate-300 marker:text-cyan-500">
+            Các kết quả giao dịch thử nghiệm, kiểm thử lịch sử (Backtest) hoặc mô phỏng luôn có những hạn chế nhất định. Do không phát sinh lệnh thật trên thị trường, kết quả chưa thể phản ánh hết các yếu tố thực tế như biến động thanh khoản hay độ trượt giá nếu có.
+            Các thuật toán giao dịch thử nghiệm được xây dựng dựa trên dữ liệu lịch sử. Việc đạt được kết quả tốt trong quá khứ không đồng nghĩa hoặc đảm bảo rằng tài khoản thực tế sẽ đạt được lợi nhuận tương tự trong tương lai.
+            
+        </ul>
+    </section>
+
+    <!-- Điều 3 -->
+    <section class="space-y-2">
+        <h4 class="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
+            3. Dữ Liệu Thị Trường & Độ Trễ Nguồn Cấp
+        </h4>
+        <ul class="list-disc pl-5 space-y-1.5 text-slate-300 marker:text-cyan-500">
+            Dữ liệu thị trường được sử dụng trên nền tảng có thể bao gồm dữ liệu được cấp phép từ các đối tác thứ ba. Tất cả dữ liệu được cung cấp trên nguyên tắc nguyên bản (<em>"as-is"</em>) và người dùng nên xác minh độc lập trước khi ra quyết định.
+        </ul>
+        <ul class="list-disc pl-5 space-y-1.5 text-slate-300 marker:text-cyan-500">
+            Dữ liệu và kết quả tính toán trên hệ thống có thể có sự khác biệt nhỏ so với các nền tảng biểu đồ hoặc sàn môi giới khác do sự khác biệt giữa nhà cung cấp dữ liệu, mốc thời gian, quy tắc làm tròn hoặc thông số kỹ thuật hợp đồng.
+        </ul>
+    </section>
+
+    <!-- Điều 4 -->
+
+    <!-- Điều 5 -->
+    <section class="space-y-2">
+        <h4 class="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
+            4. Trải Nghiệm & Hiệu Suất Từ Người Dùng
+        </h4>
+        <ul class="list-disc pl-5 space-y-1.5 text-slate-300 marker:text-cyan-500">
+            Kết quả giao dịch thực tế của từng cá nhân phụ thuộc vào kỹ năng phân tích, kỷ luật quản lý rủi ro và kinh nghiệm thực chiến.
+        </ul>
+        <ul class="list-disc pl-5 space-y-1.5 text-slate-300 marker:text-cyan-500">
+            Với vai trò là nhà phát triển công cụ phân tích kỹ thuật, chúng tôi không truy cập vào tài khoản giao dịch riêng tư hay báo cáo tài khoản của người dùng. Do đó, chúng tôi không đưa ra bất kỳ khẳng định nào về việc người dùng công cụ sẽ có hiệu suất cao hơn hay thấp hơn mặt bằng chung của thị trường.
+        </ul>
+    </section>
+
+    <!-- Điều 6 -->
+    <section class="space-y-2">
+        <h4 class="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
+            5. Tư Cách Pháp Lý & Phạm Vi Dịch Vụ
+        </h4>
+        <ul class="list-disc pl-5 space-y-1.5 text-slate-300 marker:text-cyan-500">
+            Chúng tôi không phải là nhà môi giới hoặc đơn vị Cố vấn Đầu tư đã được đăng ký. Chúng tôi không cung cấp tư vấn đầu tư cho bất kỳ cá nhân hay tổ chức nào.
+        </ul>
+        <ul class="list-disc pl-5 space-y-1.5 text-slate-300 marker:text-cyan-500">
+            Mọi dịch vụ và công cụ được cung cấp như giải pháp hỗ trợ phân tích kỹ thuật độc lập. Chúng tôi không cung cấp các dịch vụ tư vấn tài chính hay quản lý tài sản.
+        </ul>
+    </section>
+
+    <!-- Điều 7 -->
+    <section class="space-y-2">
+        <h4 class="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
+            6. Bản Quyền Thương Hiệu TradingView
+        </h4>
+        <ul class="list-disc pl-5 space-y-1.5 text-slate-300 marker:text-cyan-500">
+            Các biểu đồ hiển thị trên website này được tích hợp từ TradingView® – nơi lưu trữ và vận hành các chỉ báo kỹ thuật của chúng tôi. TradingView® là thương hiệu đã được đăng ký của TradingView, Inc. (<a href="https://www.tradingview.com" target="_blank" rel="noopener noreferrer" class="text-white hover:underline">www.tradingview.com</a>). TradingView® không có quan hệ sở hữu hay liên kết trực tiếp với các sản phẩm/dịch vụ do chúng tôi phát triển.
+        </ul>
+    </section>
+
+</div>
+        </div>
+
+        <!-- Nút Đóng bên dưới -->
+        <div class="pt-2 border-t border-slate-700/50 flex justify-end">
+            <button onclick="closeDisclaimerModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs sm:text-sm font-medium transition cursor-pointer">
+                Đóng
+            </button>
+        </div>
+
+    </div>
+</div>           
+       
+
+    <!-- =========================================================================
+       💻 SCRIPT TOÀN BỘ LOGIC: HOẠT CẢNH CUỘN LIÊN TỤC & KÉO THẢ CHẠM VUỐT
+       ========================================================================= -->
+    <script>
+
+        // ==========================================
+        // CONFIG DỄ CHỈNH SỬA BẢNG GIÁ
+        // ==========================================
+        const PLAN_PRICES = {
+            M30: {
+                monthly: '590,000',
+                yearly: '990,000',
+                monthlyStrike: 'Coupon 100,000VNĐ vào lần đầu thanh toán.',
+                yearlyStrike: 'Coupon 100,000VNĐ vào lần đầu thanh toán.',
+            },
+            Q90: {
+                monthly: '1,090,000',
+                yearly: '2,170,000',
+                monthlyStrike: 'Tiết kiệm 680,000VNĐ so với gói M30.',
+                yearlyStrike: 'Tiết kiệm 800,000VNĐ so với gói M30.',
+            },
+            Y365: {
+                monthly: '3,990,000',
+                yearly: '7,690,000',
+                monthlyStrike: 'Tiết kiệm 3,090,000VNĐ so với gói M30.',
+                yearlyStrike: 'Tiết kiệm 3,890,000VNĐ so với gói M30.',
+            },
+        };
+
+        const OFFER_END_DATE = '';
+
+        const ACTIVE_BILLING_CLASS = 'flex-1 py-1 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer text-white bg-white/10 border border-white/10 shadow-md';
+        const INACTIVE_BILLING_CLASS = 'flex-1 py-1 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer text-slate-400 hover:text-white border border-transparent';
+
+        function lockPageScroll() {
+            document.body.style.overflow = 'hidden';
+            document.body.style.height = '100vh';
+        }
+
+        function unlockPageScroll() {
+            document.body.style.overflow = '';
+            document.body.style.height = '';
+        }
+
+        // =========================================================
+        // MOBILE MENU: Mở/đóng menu tích hợp Overlay và mượt mà hóa
+        // =========================================================
+        const menuBtn = document.getElementById('menu-btn');
+        const menuIconOpen = document.getElementById('menu-icon-open');
+        const menuIconClose = document.getElementById('menu-icon-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        function openMobileMenu() {
+            mobileMenu.classList.remove('opacity-0', 'pointer-events-none', 'invisible', '-translate-y-4');
+            mobileMenu.classList.add('opacity-100', 'pointer-events-auto', 'visible', 'translate-y-0');
+            
+            if (mobileMenuOverlay) {
+                mobileMenuOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                mobileMenuOverlay.classList.add('opacity-100', 'pointer-events-auto');
+            }
+            
+            menuBtn.setAttribute('aria-expanded', 'true');
+            menuBtn.setAttribute('aria-label', 'Đóng menu điều hướng');
+            mobileMenu.setAttribute('aria-hidden', 'false');
+            menuIconOpen.classList.add('hidden');
+            menuIconClose.classList.remove('hidden');
+        }
+
+        function closeMobileMenu(restoreFocus = false) {
+            mobileMenu.classList.add('opacity-0', 'pointer-events-none', 'invisible', '-translate-y-4');
+            mobileMenu.classList.remove('opacity-100', 'pointer-events-auto', 'visible', 'translate-y-0');
+            
+            if (mobileMenuOverlay) {
+                mobileMenuOverlay.classList.add('opacity-0', 'pointer-events-none');
+                mobileMenuOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+            }
+            
+            menuBtn.setAttribute('aria-expanded', 'false');
+            menuBtn.setAttribute('aria-label', 'Mở menu điều hướng');
+            mobileMenu.setAttribute('aria-hidden', 'true');
+            menuIconOpen.classList.remove('hidden');
+            menuIconClose.classList.add('hidden');
+            if (restoreFocus) menuBtn.focus();
+        }
+
+        menuBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (mobileMenu.classList.contains('visible')) {
+                closeMobileMenu(false);
+            } else {
+                openMobileMenu();
+            }
+        });
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                closeMobileMenu(false);
+            });
+        });
+
+        if (mobileMenuOverlay) {
+            mobileMenuOverlay.addEventListener('click', function() {
+                closeMobileMenu(false);
+            });
+        }
+
+        // ==========================================
+        // BILLING SWITCHER: đổi giá giữa tháng và năm
+        // ==========================================
+        const planElements = {
+            M30: {
+                price: document.getElementById('M30-price'),
+                strike: document.getElementById('M30-strike'),
+                period: document.getElementById('M30-period'),
+            },
+            Q90: {
+                price: document.getElementById('premium-price'),
+                strike: document.getElementById('premium-strike'),
+                period: document.getElementById('premium-period'),
+            },
+            Y365: {
+                price: document.getElementById('ultimate-price'),
+                strike: document.getElementById('ultimate-strike'),
+                period: document.getElementById('ultimate-period'),
+            },
+        };
+
+        let isYearly = false;
+        const toggleMonthly = document.getElementById('toggle-monthly');
+        const toggleYearly = document.getElementById('toggle-yearly');
+
+        function setBillingCycle(toYearly) {
+            isYearly = toYearly;
+            toggleYearly.className = isYearly ? ACTIVE_BILLING_CLASS : INACTIVE_BILLING_CLASS;
+            toggleMonthly.className = isYearly ? INACTIVE_BILLING_CLASS : ACTIVE_BILLING_CLASS;
+            toggleYearly.setAttribute('aria-pressed', String(isYearly));
+            toggleMonthly.setAttribute('aria-pressed', String(!isYearly));
+
+            Object.entries(PLAN_PRICES).forEach(([planName, prices]) => {
+                const plan = planElements[planName];
+                plan.price.textContent = isYearly ? prices.yearly : prices.monthly;
+                plan.strike.textContent = isYearly ? prices.yearlyStrike : prices.monthlyStrike;
+                plan.period.textContent = isYearly ? 'VNĐ' : 'VNĐ';
+            });
+        }
+
+        toggleMonthly.addEventListener('click', () => setBillingCycle(false));
+        toggleYearly.addEventListener('click', () => setBillingCycle(true));
+
+        // ==========================================
+        // FAQ ACCORDION: mở/đóng từng câu hỏi
+        // ==========================================
+        const faqToggles = document.querySelectorAll('.faq-toggle');
+        faqToggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const content = document.getElementById(toggle.getAttribute('aria-controls'));
+                const icon = toggle.querySelector('i');
+                const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+
+                toggle.setAttribute('aria-expanded', String(!isOpen));
+                content.classList.toggle('hidden', isOpen);
+                icon.className = isOpen
+                    ? 'fa-solid fa-chevron-right text-[#f0fdff] transition-transform duration-300'
+                    : 'fa-solid fa-chevron-up text-[#f0fdff] transition-transform duration-300 rotate-180';
+            });
+        });
+
+// ==========================================
+// PAYMENT MODAL: mở thông tin chuyển khoản cho gói được chọn
+// ==========================================
+        const paymentModal = document.getElementById('payment-modal');
+        const modalPlanName = document.getElementById('modal-plan-name');
+        const modalPlanPriceValue = document.getElementById('modal-plan-price-value');
+        const modalPlanPricePeriod = document.getElementById('modal-plan-price-period');
+        const modalOrderId = document.getElementById('modal-order-id');
+        const planButtons = document.querySelectorAll('.js-plan-button');
+        const paymentCloseButtons = document.querySelectorAll('[data-close-payment]');
+        let lastFocusedElement = null;
+
+        function generateOrderSuffix() {
+            if (window.crypto && window.crypto.getRandomValues) {
+                const bytes = new Uint8Array(3);
+                window.crypto.getRandomValues(bytes);
+                return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('').toUpperCase();
+            }
+            return Date.now().toString(36).slice(-6).toUpperCase();
+        }
+
+        function openPaymentModal(plan) {
+            const prices = PLAN_PRICES[plan];
+            if (!prices) return;
+
+            const finalPrice = isYearly ? prices.yearly : prices.monthly;
+            lastFocusedElement = document.activeElement;
+            modalPlanName.textContent = plan;
+            modalPlanPriceValue.textContent = `${finalPrice} VNĐ`;
+            modalPlanPricePeriod.textContent = isYearly ? '' : '';
+            modalOrderId.textContent = `SDT_${plan.toUpperCase()}_${generateOrderSuffix()}`;
+            paymentModal.classList.remove('hidden');
+            paymentModal.setAttribute('aria-hidden', 'false');
+            lockPageScroll();
+
+            const closePaymentButton = paymentModal.querySelector('[data-close-payment]');
+            if (closePaymentButton) closePaymentButton.focus();
+        }
+
+        function closePaymentModal() {
+            paymentModal.classList.add('hidden');
+            paymentModal.setAttribute('aria-hidden', 'true');
+            unlockPageScroll();
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                lastFocusedElement.focus();
+            }
+        }
+
+        planButtons.forEach(button => {
+            button.addEventListener('click', () => openPaymentModal(button.dataset.plan));
+        });
+
+        paymentCloseButtons.forEach(button => {
+            button.addEventListener('click', closePaymentModal);
+        });
+
+        paymentModal.addEventListener('click', event => {
+            if (event.target === paymentModal) closePaymentModal();
+        });
+
+        document.addEventListener('keydown', event => {
+            if (event.key !== 'Escape') return;
+            if (!paymentModal.classList.contains('hidden')) {
+                closePaymentModal();
+            } else if (mobileMenu.classList.contains('visible')) {
+                closeMobileMenu(true);
+            }
+        });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    /* =========================================================================
+       📊 ĐOẠN 1: THANH MARQUEE CHẠY NGANG (CRYPTO, CỔ PHIẾU, FOREX...)
+       ========================================================================= */
+    const marqueeContainer = document.querySelector('.marquee-container');
+    const marqueeTrack = document.querySelector('.marquee-track');
+
+    if (marqueeContainer && marqueeTrack) {
+        // Nhân bản nội dung để tạo vòng lặp cuộn vô tận mượt mà
+        const originalContent = marqueeTrack.innerHTML;
+        marqueeTrack.innerHTML = originalContent + originalContent + originalContent;
+
+        let marqueeSpeed = 1; 
+        let isMarqueePaused = false;
+
+        function stepMarquee() {
+            if (!isMarqueePaused) {
+                marqueeContainer.scrollLeft += marqueeSpeed;
+                
+                // Reset về vị trí ban đầu khi cuộn hết 1/3
+                if (marqueeContainer.scrollLeft >= marqueeTrack.scrollWidth / 3) {
+                    marqueeContainer.scrollLeft = 0;
+                }
+            }
+            requestAnimationFrame(stepMarquee);
+        }
+        // Kích hoạt chạy tự động
+        requestAnimationFrame(stepMarquee);
+
+        // PC: Hover chuột
+        marqueeTrack.addEventListener('mouseenter', () => { isMarqueePaused = true; });
+        marqueeTrack.addEventListener('mouseleave', () => { isMarqueePaused = false; });
+
+        // Mobile: Chạm dừng
+        marqueeContainer.addEventListener('touchstart', () => { isMarqueePaused = true; }, { passive: true });
+        marqueeContainer.addEventListener('touchend', () => {
+            setTimeout(() => { isMarqueePaused = false; }, 200);
+        }, { passive: true });
+    }
+
+
+    /* =========================================================================
+       📸 ĐOẠN 2: CAROUSEL ẢNH CHỈ BÁO (KÉO THẢ / SWIPE 3D)
+       ========================================================================= */
+    class InfiniteMarquee {
+        constructor(sectionEl) {
+            this.section = sectionEl;
+            this.zone = sectionEl.querySelector('.image-zone');
+            this.track = sectionEl.querySelector('.image-track');
+            
+            // 👉 THAY ĐỔI CHÍ MẠNG: Nếu cấu trúc HTML thiếu class con, hủy khởi tạo ngay lập tức
+            if (!this.zone || !this.track) {
+                console.warn("Carousel Chỉ báo: Cấu trúc HTML của section thiếu .image-zone hoặc .image-track.", sectionEl);
+                return; 
+            }
+            
+            this.items = Array.from(this.track.querySelectorAll('.image-item'));
+            if (this.items.length === 0) return; // Không có item thì không chạy
+
+            this.speed = 0.8; 
+            this.isMobile = false; 
+            this.currentPos = 0;
+            this.isDragging = false;
+            this.startX = 0;
+            this.startY = 0;
+            this.scrollStart = 0;
+            this.isHovered = false;
+            this.activeTouchItem = null;
+
+            this.init();
+        }
+
+        init() {
+            this.checkBreakpoint();
+            this.cloneItems();
+            this.setupEvents();
+            
+            if (document.readyState === 'complete') {
+                this.animate();
+            } else {
+                window.addEventListener('load', () => this.animate());
+            }
+            
+            window.addEventListener('resize', () => {
+                const wasMobile = this.isMobile;
+                this.checkBreakpoint();
+                if (wasMobile !== this.isMobile) {
+                    this.currentPos = 0; 
+                }
+            });
+        }
+
+        checkBreakpoint() {
+            const simContainer = document.getElementById('simulator-container');
+            const isSimMobile = simContainer && simContainer.classList.contains('sim-mode-mobile');
+            this.isMobile = (window.innerWidth <= 768) || isSimMobile;
+        }
+
+        cloneItems() {
+            const oldClones = this.track.querySelectorAll('.marquee-clone');
+            oldClones.forEach(c => c.remove());
+
+            this.items.forEach(item => {
+                const clone = item.cloneNode(true);
+                clone.classList.add('marquee-clone');
+                this.track.appendChild(clone);
+            });
+        }
+
+        getLoopSize() {
+            const gap = 25; 
+            if (this.items.length === 0) return 0;
+            
+            if (this.isMobile) {
+                const itemWidth = this.items[0].offsetWidth;
+                return this.items.length * (itemWidth + gap);
+            } else {
+                const itemHeight = this.items[0].offsetHeight;
+                return this.items.length * (itemHeight + gap);
+            }
+        }
+
+        setupEvents() {
+            this.zone.addEventListener('mouseenter', () => { this.isHovered = true; });
+            this.zone.addEventListener('mouseleave', () => {
+                this.isHovered = false;
+                this.isDragging = false;
+                this.zone.classList.remove('dragging');
+            });
+
+            //  ĐOẠN THÊM MỚI: BẮT SỰ KIỆN LĂN CHUỘT (WHEEL) TRÊN DESKTOP
+        this.zone.addEventListener('wheel', (e) => {
+            // Ngăn chặn trình duyệt cuộn trang web lên xuống khi chuột đang nằm trong Carousel
+            e.preventDefault();
+
+            // e.deltaY > 0 nghĩa là người dùng đang lăn bánh xe chuột xuống
+            // Trên Desktop (PC), Carousel chạy dọc nên ta thay đổi tọa độ theo e.deltaY trực tiếp
+            // Hệ số 1.2 giúp tốc độ lướt theo chuột vừa phải, bạn tăng lên 1.5 hoặc 2 nếu muốn lướt nhanh nữa
+            if (!this.isMobile) {
+                this.currentPos -= e.deltaY * 1.2;
+            } else {
+                // Trường hợp nếu Desktop bật chế độ responsive nhỏ (Mobile) chạy ngang
+                this.currentPos -= e.deltaY * 1.2;
+            }
+
+            // Đồng bộ luôn biến scrollStart để nếu người dùng đang lăn chuột mà nhấn chuột trái kéo tiếp không bị giật
+            this.scrollStart = this.currentPos;
+            }, { passive: false }); // Bắt buộc passive: false để e.preventDefault() hoạt động thành công
+            // hết thêm mới
+
+            this.zone.addEventListener('mousedown', (e) => {
+                this.isDragging = true;
+                this.zone.classList.add('dragging');
+                this.startY = e.clientY;
+                this.startX = e.clientX;
+                this.scrollStart = this.currentPos;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!this.isDragging) return;
+                if (this.isMobile) {
+                    const deltaX = e.clientX - this.startX;
+                    this.currentPos = this.scrollStart + deltaX;
+                } else {
+                    const deltaY = e.clientY - this.startY;
+                    this.currentPos = this.scrollStart + deltaY;
+                }
+            });
+
+            window.addEventListener('mouseup', () => {
+                this.isDragging = false;
+                this.zone.classList.remove('dragging');
+            });
+
+            this.zone.addEventListener('touchstart', (e) => {
+                this.isDragging = true;
+                this.isHovered = true; 
+                
+                const touch = e.touches[0];
+                this.startX = touch.clientX;
+                this.startY = touch.clientY;
+                this.scrollStart = this.currentPos;
+
+                const targetItem = e.target.closest('.image-item');
+                if (targetItem) {
+                    this.activeTouchItem = targetItem;
+                    targetItem.classList.add('touch-active');
+                }
+            }, { passive: true });
+
+            this.zone.addEventListener('touchmove', (e) => {
+                if (!this.isDragging) return;
+                
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - this.startX;
+                const deltaY = touch.clientY - this.startY;
+
+                if (this.isMobile) {
+                    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                        if (e.cancelable) e.preventDefault();
+                        this.currentPos = this.scrollStart + deltaX;
+                    }
+                } else {
+                    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                        if (e.cancelable) e.preventDefault();
+                        this.currentPos = this.scrollStart + deltaY;
+                    }
+                }
+            }, { passive: false });
+
+            window.addEventListener('touchend', () => {
+                this.isDragging = false;
+                if (this.activeTouchItem) {
+                    this.activeTouchItem.classList.remove('touch-active');
+                    this.activeTouchItem = null;
+                }
+                setTimeout(() => {
+                    if (!this.isDragging) this.isHovered = false;
+                }, 200);
+            });
+        }
+
+        animate() {
+            const loopSize = this.getLoopSize();
+            if (loopSize > 0) {
+                if (!this.isDragging && !this.isHovered && !this.activeTouchItem) {
+                    this.currentPos -= this.speed;
+                }
+
+                if (this.currentPos <= -loopSize) {
+                    this.currentPos += loopSize;
+                    if (this.isDragging) this.scrollStart += loopSize;
+                } else if (this.currentPos > 0) {
+                    this.currentPos -= loopSize;
+                    if (this.isDragging) this.scrollStart -= loopSize;
+                }
+
+                if (this.isMobile) {
+                    this.track.style.transform = `translate3d(${this.currentPos}px, 0, 0)`;
+                } else {
+                    this.track.style.transform = `translate3d(0, ${this.currentPos}px, 0)`;
+                }
+            }
+            requestAnimationFrame(() => this.animate());
+        }
+    }
+
+    // Khởi tạo Carousel chỉ áp dụng cho class .content-section
+    document.querySelectorAll('.content-section').forEach(section => {
+        new InfiniteMarquee(section);
+    });
+
+
+    /* =========================================================================
+       🔘 ĐOẠN 3: HIỆU ỨNG CHẠM NÚT "SỬ DỤNG TRÊN BIỂU ĐỒ"
+       ========================================================================= */
+    const actionBtn = document.querySelector('.rotating-border-wrapper');
+    if (actionBtn) {
+        actionBtn.addEventListener('touchstart', () => {
+            actionBtn.classList.add('is-touched');
+        }, { passive: true });
+
+        actionBtn.addEventListener('touchend', () => {
+            setTimeout(() => {
+                actionBtn.classList.remove('is-touched');
+            }, 500);
+        }, { passive: true });
+    }
+});
+
+
+/* Lắng nghe Fade in */
+const observerOptions = {
+    root: null, 
+    // threshold: 0.2, // Có thể bỏ bớt threshold để nhạy hơn
+    rootMargin: "0px 0px -70px 0px" // Chỉ kích hoạt khi cách đáy màn hình 80px
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // Khi cuộn TỚI: Thêm class để fade in
+        entry.target.classList.add("is-visible");
+      } else {
+        // Khi cuộn QUA (khuất khỏi màn hình): Xóa class để ẩn đi
+        entry.target.classList.remove("is-visible");
+      }
+    });
+  }, observerOptions);
+
+  // Theo dõi tất cả các section có class fade-in-section
+  document.querySelectorAll(".fade-in-section").forEach(section => {
+    observer.observe(section);
+  });
+
+
+//BANK PAYMENT
+document.addEventListener("DOMContentLoaded", () => {
+    const tabAcb = document.getElementById('tab-acb');
+    const tabScb = document.getElementById('tab-scb');
+    const contentAcb = document.getElementById('content-acb');
+    const contentScb = document.getElementById('content-scb');
+
+    if (tabAcb && tabScb && contentAcb && contentScb) {
+        const activeClass = "flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-[linear-gradient(180deg,rgba(59,171,246,0.8)_0%,rgba(59,171,246,1)_20%,rgba(103,232,249,1)_40%,rgba(255,255,255,1)_50%,rgba(103,232,249,1)_60%,rgba(59,130,246,1)_80%,rgba(25,83,255,0.8)_100%)] text-slate-950 shadow-md";
+        const inactiveClass = "flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-white";
+
+        tabAcb.addEventListener('click', (e) => {
+            e.preventDefault();
+            tabAcb.className = activeClass;
+            tabScb.className = inactiveClass;
+            contentAcb.classList.remove('hidden');
+            contentScb.classList.add('hidden');
+        });
+
+        tabScb.addEventListener('click', (e) => {
+            e.preventDefault();
+            tabScb.className = activeClass;
+            tabAcb.className = inactiveClass;
+            contentScb.classList.remove('hidden');
+            contentAcb.classList.add('hidden');
+        });
+    }
+});
+
+//DISCLAIMER
+function openDisclaimerModal() {
+    const modal = document.getElementById('disclaimer-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Khóa cuộn trang phía sau
+    }
+}
+
+function closeDisclaimerModal() {
+    const modal = document.getElementById('disclaimer-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = ''; // Mở lại cuộn trang
+    }
+}
+
+// Bấm ra ngoài vùng modal để đóng
+document.getElementById('disclaimer-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDisclaimerModal();
+    }
+});
+
+//Tạo sao động
+// Tạo sao ngẫu nhiên, tránh vùng nội dung chính
+function createStars() {
+    const starsContainer = document.getElementById('stars');
+    const numStars = 200;
+    const centerZone = { 
+        top: 20, bottom: 85, 
+        left: 15, right: 85 
+    };
+    
+    for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        let x, y;
+        let inCenter;
+        do {
+            x = Math.random() * 100;
+            y = Math.random() * 100;
+            inCenter = (y > centerZone.top && y < centerZone.bottom && 
+                       x > centerZone.left && x < centerZone.right);
+        } while (inCenter && Math.random() > 0.3); // 30% sao vẫn xuất hiện trong vùng trung tâm nhưng mờ nhạt
+        
+        const size = Math.random() * 2.5 + 0.5;
+        const duration = Math.random() * 10 + 2;
+        const delay = Math.random() * 5;
+        const maxOpacity = inCenter ? Math.random() * 0.3 + 0.1 : Math.random() * 0.8 + 0.2;
+        
+        star.style.left = x + '%';
+        star.style.top = y + '%';
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.setProperty('--duration', duration + 's');
+        star.style.setProperty('--max-opacity', maxOpacity);
+        star.style.animationDelay = delay + 's';
+        
+        // Thêm glow cho sao lớn
+        if (size > 2) {
+            star.style.boxShadow = `0 0 ${size * 3}px rgba(255, 255, 255, 0.8)`;
+        }
+        
+        starsContainer.appendChild(star);
+    }
+}
+createStars();
+
+
+//Tạo sao băng
+        const shootingStarsContainer = document.getElementById('shootingStarsContainer');
+
+        function launchShootingStar() {
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+            
+            // Xuất hiện từ góc trên bên phải
+            const startX = Math.random() * 20 + 10; 
+            const startY = Math.random() * 40;
+            const duration = Math.random() * 2 + 3; 
+            const angle = '210deg'; // Bay chéo từ phải sang trái
+
+            star.style.left = `${startX}%`;
+            star.style.top = `${startY}%`;
+            star.style.animation = `shoot ${duration}s linear forwards`;
+            star.style.setProperty('--angle', angle);
+
+            shootingStarsContainer.appendChild(star);
+
+            setTimeout(() => {
+                star.remove();
+            }, duration * 1000);
+        }
+
+        // Hàm tạo ra 2-3 sao băng cùng một lúc
+        function triggerWave() {
+            const count = Math.floor(Math.random() * 2) + 1; // Sẽ ra 2 hoặc 3
+            for(let i = 0; i < count; i++) {
+                // Delay một chút giữa các ngôi sao để nhìn tự nhiên hơn
+                setTimeout(launchShootingStar, i * 600);
+            }
+        }
+
+        // Bắt đầu đợt đầu tiên ngay lập tức
+        triggerWave();
+
+        // Cứ mỗi 4-7 giây lại có một đợt 2-3 sao băng mới
+        setInterval(() => {
+            triggerWave();
+        }, 9000 + Math.random() * 3000);
+
+
+    </script>
+</body>
+</html>
